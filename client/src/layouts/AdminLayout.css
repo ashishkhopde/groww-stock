@@ -1,0 +1,29 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: #111827;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar nav a {
+  display: block;
+  color: #d1d5db;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.sidebar nav a:hover {
+  background: #1f2937;
+  border-radius: 6px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background: #f3f4f6;
+}
