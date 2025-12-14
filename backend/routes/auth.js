@@ -7,7 +7,7 @@ console.log("ENV TEST:", process.env.MAIL_USER, process.env.MAIL_PASS);
 
 import express from "express";
 import User from "../models/User.js";
-import Otp from "../models/Otp.js";
+import Otp from "../models/otp.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { protect } from "../middleware/authMiddleware.js";
