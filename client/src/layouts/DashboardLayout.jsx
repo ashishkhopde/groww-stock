@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import API from "../api/axios";
 import {
   LayoutDashboard,
@@ -15,35 +16,50 @@ import {
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [active, setActive] = useState(window.location.pathname);
   const [user, setUser] = useState(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const active = location.pathname; // ✅ Automatically updates active state
+
+  // Fetch user profile
   useEffect(() => {
     API.get("/auth/profile")
       .then((res) => setUser(res.data))
       .catch(() => {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        navigate("/login");
       });
-  }, []);
+  }, [navigate]);
 
+  // Handle sidebar navigation
   const handleNavigate = (path) => {
-    setActive(path);
-    window.location.href = path;
+    navigate(path);
+    setIsSidebarOpen(false);
   };
 
+  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login");
   };
+
+  // Sidebar menu items
+  const menuItems = [
+    { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
+    { label: "Portfolio", icon: <TrendingUp size={20} />, path: "/portfolio" },
+    { label: "Profile", icon: <Users size={20} />, path: "/profile" },
+    { label: "Withdrawal List", icon: <ArrowUpRight size={20} />, path: "/withdrawal" },
+    { label: "Plan List", icon: <CreditCard size={20} />, path: "/plans" },
+    { label: "Wallet History", icon: <Wallet size={20} />, path: "/wallet" },
+  ];
 
   return (
     <div className="flex h-screen bg-[#F1F5F9] font-sans text-slate-800 overflow-hidden">
-
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -55,9 +71,9 @@ export default function DashboardLayout({ children }) {
         }`}
       >
         {/* Logo */}
-        <div className="p-6 flex items-center justify-between">
-          <div className="flex items-center gap-3 font-bold text-xl">
-            <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center text-lg">
+        <div className="flex items-center justify-between p-6">
+          <div className="flex items-center gap-3 text-xl font-bold">
+            <div className="flex items-center justify-center text-lg rounded-lg w-9 h-9 bg-emerald-600">
               F
             </div>
             <span className="tracking-wide">Angel Smartlgo</span>
@@ -73,48 +89,15 @@ export default function DashboardLayout({ children }) {
 
         {/* MENU */}
         <nav className="px-4 py-2 space-y-1">
-          <p className="px-4 mb-2 text-xs text-slate-500 uppercase tracking-wider">
+          <p className="px-4 mb-2 text-xs tracking-wider uppercase text-slate-500">
             Menu
           </p>
 
-          {/* UPDATED MENU LIST WITH PROFILE ADDED */}
-          {[
-            {
-              label: "Dashboard",
-              icon: <LayoutDashboard size={20} />,
-              path: "/dashboard",
-            },
-            {
-              label: "Portfolio",
-              icon: <TrendingUp size={20} />,
-              path: "/portfolio",
-            },
-            {
-              label: "Profile",
-              icon: <Users size={20} />,
-              path: "/profile",
-            },
-            {
-              label: "Withdrawal List",
-              icon: <ArrowUpRight size={20} />,
-              path: "/withdrawal",
-            },
-            {
-              label: "Plan List",
-              icon: <CreditCard size={20} />,
-              path: "/plans",
-            },
-            {
-              label: "Wallet History",
-              icon: <Wallet size={20} />,
-              path: "/wallet",
-            },
-          ].map((item) => (
+          {menuItems.map((item) => (
             <div
               key={item.path}
               onClick={() => handleNavigate(item.path)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all
-              ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
                 active === item.path
                   ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/40"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -128,7 +111,7 @@ export default function DashboardLayout({ children }) {
           {/* Logout */}
           <div
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer text-red-400 hover:bg-red-700/20 hover:text-red-300 transition-all"
+            className="flex items-center gap-3 px-4 py-3 text-red-400 transition-all cursor-pointer rounded-xl hover:bg-red-700/20 hover:text-red-300"
           >
             <LogOut size={20} />
             <span className="font-medium">Logout</span>
@@ -136,11 +119,12 @@ export default function DashboardLayout({ children }) {
         </nav>
 
         {/* USER FOOTER */}
-        <div className="absolute bottom-0 w-full p-4 bg-slate-800/40 border-t border-slate-700">
+        <div className="absolute bottom-0 w-full p-4 border-t bg-slate-800/40 border-slate-700">
           <div className="flex items-center gap-3">
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=UserAvatar"
-              className="w-10 h-10 rounded-full border border-slate-600"
+              className="w-10 h-10 border rounded-full border-slate-600"
+              alt="User avatar"
             />
             <div>
               <p className="text-sm font-medium">{user?.name}</p>
@@ -151,20 +135,19 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-auto relative">
-
+      <main className="relative flex-1 overflow-auto">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0">
+        <header className="sticky top-0 flex items-center justify-between h-16 px-6 bg-white border-b border-slate-200">
           {/* Mobile toggle */}
           <button
-            className="lg:hidden p-2 rounded-md hover:bg-slate-100"
+            className="p-2 rounded-md lg:hidden hover:bg-slate-100"
             onClick={() => setIsSidebarOpen(true)}
           >
             <Menu size={20} />
           </button>
 
           <h2 className="text-lg font-semibold tracking-tight">
-            {active.replace("/", "").toUpperCase() || "Dashboard"}
+            {active.replace("/", "").toUpperCase() || "DASHBOARD"}
           </h2>
 
           <button className="p-2 rounded-full hover:bg-slate-100">
