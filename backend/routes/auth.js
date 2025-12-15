@@ -1,11 +1,11 @@
-// Load env FIRST (critical for email OTP)
+// Load env FIRST
 import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
+import transporter from "../utils/emailService.js";
 
 import User from "../models/User.js";
 import Otp from "../models/otp.js";
@@ -14,30 +14,7 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 /* ============================================================
-   DEBUG ENV
-============================================================ */
-console.log("AUTH FILE PATH:", import.meta.url);
-console.log("ENV TEST:", process.env.MAIL_USER, process.env.MAIL_PASS);
-
-/* ============================================================
-   EMAIL TRANSPORT (GMAIL SMTP)
-============================================================ */
-const emailTransport = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
-
-// Verify email config
-emailTransport.verify((err) => {
-  if (err) console.error("EMAIL CONFIG ERROR ❌", err);
-  else console.log("EMAIL SERVER READY ✅");
-});
-
-/* ============================================================
-   SEND EMAIL OTP
+   SEND EMAIL OTP (BREVO SMTP)
 ============================================================ */
 router.post("/send-email-otp", async (req, res) => {
   try {
@@ -54,7 +31,7 @@ router.post("/send-email-otp", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = await bcrypt.hash(otp, 10);
 
-    // Delete old OTPs
+    // Remove old OTP
     await Otp.deleteMany({ email });
 
     // Save OTP
@@ -64,18 +41,22 @@ router.post("/send-email-otp", async (req, res) => {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     });
 
-    // Send Email
-    await emailTransport.sendMail({
-      from: `"Auth Service" <${process.env.MAIL_USER}>`,
+    // Send Email via Brevo
+    await transporter.sendMail({
+      from: process.env.MAIL_FROM,
       to: email,
       subject: "Your Email Verification OTP",
-      text: `Your OTP is ${otp}. It expires in 5 minutes.`,
+      html: `
+        <div style="font-family:Arial,sans-serif">
+          <h2>Email Verification</h2>
+          <p>Your OTP is:</p>
+          <h1>${otp}</h1>
+          <p>This OTP will expire in <b>5 minutes</b>.</p>
+        </div>
+      `,
     });
 
-    console.log("EMAIL OTP:", otp);
-    console.log(`OTP sent to ${email}`);
-    console.log("ENV MAIL USER:", process.env.MAIL_USER);
-    console.log(emailTransport);
+    console.log("OTP SENT:", email);
     res.json({ msg: "OTP sent to email 📧" });
 
   } catch (error) {
@@ -144,44 +125,6 @@ router.post("/verify-email-otp", async (req, res) => {
   } catch (error) {
     console.error("VERIFY EMAIL OTP ERROR:", error);
     res.status(500).json({ msg: "OTP verification failed" });
-  }
-});
-
-/* ============================================================
-   PHONE OTP (DEV MODE)
-============================================================ */
-router.post("/send-otp-register", async (req, res) => {
-  try {
-    const { name, email, phone, password } = req.body;
-
-    if (!name || !email || !phone || !password)
-      return res.status(400).json({ msg: "All fields required" });
-
-    const exists = await User.findOne({ email });
-    if (exists)
-      return res.status(400).json({ msg: "Email already registered" });
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    const otpHash = await bcrypt.hash(otp, 10);
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    await Otp.deleteMany({ phone });
-
-    await Otp.create({
-      phone,
-      email,
-      name,
-      otpHash,
-      passwordHash,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
-
-    console.log("PHONE OTP:", otp);
-    res.json({ msg: "OTP generated (dev)", otp });
-
-  } catch (error) {
-    res.status(500).json({ msg: "Failed to send phone OTP" });
   }
 });
 
