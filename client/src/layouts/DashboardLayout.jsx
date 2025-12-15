@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import API from "../api/axios";
 import {
   LayoutDashboard,
@@ -16,46 +15,31 @@ import {
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [active, setActive] = useState(window.location.pathname);
   const [user, setUser] = useState(null);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const active = location.pathname; // ✅ Automatically updates active state
-
-  // Fetch user profile
   useEffect(() => {
     API.get("/auth/profile")
       .then((res) => setUser(res.data))
       .catch(() => {
         localStorage.removeItem("token");
-        navigate("/login");
+        window.location.href = "/login";
       });
-  }, [navigate]);
+  }, []);
 
-  // Handle sidebar navigation
   const handleNavigate = (path) => {
-    navigate(path);
-    setIsSidebarOpen(false);
+    setActive(path);
+    window.location.href = path;
   };
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    window.location.href = "/login";
   };
-
-  // Sidebar menu items
-  const menuItems = [
-    { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
-    { label: "Portfolio", icon: <TrendingUp size={20} />, path: "/portfolio" },
-    { label: "Profile", icon: <Users size={20} />, path: "/profile" },
-    { label: "Withdrawal List", icon: <ArrowUpRight size={20} />, path: "/withdrawal" },
-    { label: "Plan List", icon: <CreditCard size={20} />, path: "/plans" },
-    { label: "Wallet History", icon: <Wallet size={20} />, path: "/wallet" },
-  ];
 
   return (
     <div className="flex h-screen bg-[#F1F5F9] font-sans text-slate-800 overflow-hidden">
+
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
         <div
@@ -93,11 +77,44 @@ export default function DashboardLayout({ children }) {
             Menu
           </p>
 
-          {menuItems.map((item) => (
+          {/* UPDATED MENU LIST WITH PROFILE ADDED */}
+          {[
+            {
+              label: "Dashboard",
+              icon: <LayoutDashboard size={20} />,
+              path: "/dashboard",
+            },
+            {
+              label: "Portfolio",
+              icon: <TrendingUp size={20} />,
+              path: "/portfolio",
+            },
+            {
+              label: "Profile",
+              icon: <Users size={20} />,
+              path: "/profile",
+            },
+            {
+              label: "Withdrawal List",
+              icon: <ArrowUpRight size={20} />,
+              path: "/withdrawal",
+            },
+            {
+              label: "Plan List",
+              icon: <CreditCard size={20} />,
+              path: "/plans",
+            },
+            {
+              label: "Wallet History",
+              icon: <Wallet size={20} />,
+              path: "/wallet",
+            },
+          ].map((item) => (
             <div
               key={item.path}
               onClick={() => handleNavigate(item.path)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all
+              ${
                 active === item.path
                   ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/40"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -124,7 +141,6 @@ export default function DashboardLayout({ children }) {
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=UserAvatar"
               className="w-10 h-10 border rounded-full border-slate-600"
-              alt="User avatar"
             />
             <div>
               <p className="text-sm font-medium">{user?.name}</p>
@@ -136,6 +152,7 @@ export default function DashboardLayout({ children }) {
 
       {/* MAIN CONTENT AREA */}
       <main className="relative flex-1 overflow-auto">
+
         {/* Header */}
         <header className="sticky top-0 flex items-center justify-between h-16 px-6 bg-white border-b border-slate-200">
           {/* Mobile toggle */}
@@ -147,7 +164,7 @@ export default function DashboardLayout({ children }) {
           </button>
 
           <h2 className="text-lg font-semibold tracking-tight">
-            {active.replace("/", "").toUpperCase() || "DASHBOARD"}
+            {active.replace("/", "").toUpperCase() || "Dashboard"}
           </h2>
 
           <button className="p-2 rounded-full hover:bg-slate-100">
