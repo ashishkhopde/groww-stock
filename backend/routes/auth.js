@@ -5,7 +5,7 @@ dotenv.config();
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import transporter from "../utils/emailService.js";
+import transporter from "./emailService.js";
 
 import User from "../models/User.js";
 import Otp from "../models/otp.js";
