@@ -73,6 +73,9 @@ router.post("/send-email-otp", async (req, res) => {
     });
 
     console.log("EMAIL OTP:", otp);
+    console.log(`OTP sent to ${email}`);
+    console.log("ENV MAIL USER:", process.env.MAIL_USER);
+    console.log(emailTransport);
     res.json({ msg: "OTP sent to email 📧" });
 
   } catch (error) {
