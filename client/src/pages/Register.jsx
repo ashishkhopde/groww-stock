@@ -64,12 +64,12 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-md shadow-lg rounded-2xl p-8">
+      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-2xl">
         <h2 className="text-3xl font-bold text-center text-[#1e293b]">
           {step === 1 ? "Create Account" : "Verify Email OTP"}
         </h2>
 
-        <p className="text-center text-gray-600 mt-1">
+        <p className="mt-1 text-center text-gray-600">
           {step === 1
             ? "Start your investment journey"
             : `We sent an OTP to ${form.email}`}
@@ -79,56 +79,52 @@ export default function Register() {
         {step === 1 && (
           <form onSubmit={handleSendOtp} className="mt-8 space-y-5">
             <div>
-              <label className="text-gray-700 font-medium">Full Name</label>
+              <label className="font-medium text-gray-700">Full Name</label>
               <input
                 name="name"
                 value={form.name}
                 onChange={handleChange}
                 type="text"
-                className="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2
-                focus:ring-emerald-500 outline-none"
+                className="w-full px-4 py-3 mt-1 border outline-none rounded-xl focus:ring-2 focus:ring-emerald-500"
                 placeholder="Your name"
                 required
               />
             </div>
 
             <div>
-              <label className="text-gray-700 font-medium">Email</label>
+              <label className="font-medium text-gray-700">Email</label>
               <input
                 name="email"
                 value={form.email}
                 onChange={handleChange}
                 type="email"
-                className="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2
-                focus:ring-emerald-500 outline-none"
+                className="w-full px-4 py-3 mt-1 border outline-none rounded-xl focus:ring-2 focus:ring-emerald-500"
                 placeholder="Email address"
                 required
               />
             </div>
 
             <div>
-              <label className="text-gray-700 font-medium">Phone Number</label>
+              <label className="font-medium text-gray-700">Phone Number</label>
               <input
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
                 type="tel"
-                className="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2
-                focus:ring-emerald-500 outline-none"
+                className="w-full px-4 py-3 mt-1 border outline-none rounded-xl focus:ring-2 focus:ring-emerald-500"
                 placeholder="10-digit mobile number"
                 required
               />
             </div>
 
             <div>
-              <label className="text-gray-700 font-medium">Password</label>
+              <label className="font-medium text-gray-700">Password</label>
               <input
                 name="password"
                 value={form.password}
                 onChange={handleChange}
                 type="password"
-                className="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2
-                focus:ring-emerald-500 outline-none"
+                className="w-full px-4 py-3 mt-1 border outline-none rounded-xl focus:ring-2 focus:ring-emerald-500"
                 placeholder="Create password"
                 required
               />
@@ -137,8 +133,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-emerald-600 text-white rounded-xl text-lg
-              hover:bg-emerald-700"
+              className="w-full py-3 text-lg text-white bg-emerald-600 rounded-xl hover:bg-emerald-700"
             >
               {loading ? "Sending OTP..." : "Send OTP"}
             </button>
@@ -149,7 +144,7 @@ export default function Register() {
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="mt-8 space-y-5">
             <div>
-              <label className="text-gray-700 font-medium">Enter OTP</label>
+              <label className="font-medium text-gray-700">Enter OTP</label>
               <input
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
@@ -165,8 +160,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={otpLoading}
-              className="w-full py-3 bg-emerald-600 text-white rounded-xl text-lg
-              hover:bg-emerald-700"
+              className="w-full py-3 text-lg text-white bg-emerald-600 rounded-xl hover:bg-emerald-700"
             >
               {otpLoading ? "Verifying..." : "Verify & Register"}
             </button>
@@ -174,16 +168,16 @@ export default function Register() {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="w-full mt-2 text-sm text-slate-500 underline"
+              className="w-full mt-2 text-sm underline text-slate-500"
             >
               Change details
             </button>
           </form>
         )}
 
-        <p className="text-center text-sm text-gray-600 mt-5">
+        <p className="mt-5 text-sm text-center text-gray-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-emerald-600 font-medium hover:underline">
+          <Link to="/login" className="font-medium text-emerald-600 hover:underline">
             Sign in
           </Link>
         </p>
