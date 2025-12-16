@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import Trading from '../assets/charts/Trading_chart.png';
+import logo from '../assets/charts/logo.png';
 
 // --- Navbar Component ---
 const Navbar = () => {
@@ -25,12 +26,9 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 w-full bg-white bg-opacity-95 backdrop-blur-sm shadow-lg h-16 flex items-center px-6 md:px-10 lg:px-16 z-50 transition-all duration-300">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-          <BarChart4 size={20} className="text-white" />
+        <div className="w-50 h-50 rounded-lg flex items-center justify-center">
+        <img src={logo} alt="Financial Chart"  />
         </div>
-        <h1 className="text-xl font-bold text-slate-800 tracking-tight">Groww Capital</h1>
-      </div>
 
       {/* Desktop Menu */}
       <div className="ml-auto hidden md:flex items-center gap-8 text-slate-600 font-medium">
