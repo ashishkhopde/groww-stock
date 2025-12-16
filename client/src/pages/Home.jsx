@@ -26,7 +26,7 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 w-full bg-white bg-opacity-95 backdrop-blur-sm shadow-lg h-16 flex items-center px-6 md:px-10 lg:px-16 z-50 transition-all duration-300">
-        <div className="w-50 h-50 rounded-lg flex items-center justify-center">
+        <div className="w-45 h-45 rounded-lg flex items-center justify-center">
         <img src={logo} alt="Financial Chart"  />
         </div>
 
@@ -264,11 +264,11 @@ const Footer = () => (
   <footer id="contact" className="py-12 bg-slate-900 text-white">
     <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 border-b border-slate-700 pb-8 mb-8">
       <div>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <BarChart4 size={20} className="text-white" />
-          </div>
-          <h1 className="text-xl font-bold tracking-tight">Groww Capital</h1>
+        <div className="flex items-center gap-2 mb-3">
+        <div className="w-60 h-60 rounded-sm flex items-center justify-center ">
+        <img src={logo} alt="Financial Chart"  />
+        </div>
+          {/* <h1 className="text-xl font-bold tracking-tight">Groww Capital</h1> */}
         </div>
         <p className="text-slate-400 text-sm">
           Leading the way in digital investment strategies for secure and maximized returns.
@@ -301,10 +301,6 @@ const Footer = () => (
           <li className="flex items-center gap-3">
             <Mail size={16} className="text-emerald-400" />
             <span>angelsmartalgo@gmail.com</span>
-          </li>
-          <li className="flex items-center gap-3">
-            <Globe size={16} className="text-emerald-400" />
-            <span>India, Global Offices</span>
           </li>
         </ul>
       </div>
