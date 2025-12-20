@@ -1,65 +1,67 @@
 import express from "express";
 import Stock from "../../models/stock.js";
-
 import { protect, adminProtect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// -------------------- ADD STOCK --------------------
+/* ===================== ADD STOCK ===================== */
 router.post("/add", protect, adminProtect, async (req, res) => {
-  console.log("REQ.BODY RECEIVED FROM FRONTEND:", req.body);
+  try {
+    const { userId, stockName, price, quantity, profit = 0, loss = 0 } = req.body;
 
-  const { userId, stockName, price, quantity } = req.body;
+    if (!userId || !stockName || !price || !quantity)
+      return res.status(400).json({ msg: "Missing fields" });
 
-  if (!userId || !stockName || !price || !quantity) {
-    return res.status(400).json({ msg: "Missing fields", body: req.body });
+    const stock = await Stock.create({
+      user: userId,
+      stockName,
+      price,
+      quantity,
+      profit,
+      loss,
+    });
+
+    res.json({ msg: "Stock added successfully", stock });
+  } catch (error) {
+    console.error("ADD STOCK ERROR:", error);
+    res.status(500).json({ msg: "Server error while adding stock" });
   }
-
-  const stock = await Stock.create({
-    user: userId,
-    stockName,
-    price,
-    quantity
-  });
-
-  res.json({ msg: "Stock added successfully", stock });
 });
 
-
-// -------------------- UPDATE STOCK --------------------
+/* ===================== UPDATE STOCK ===================== */
 router.put("/:id", protect, adminProtect, async (req, res) => {
   try {
-    const { stockName, price, quantity } = req.body;
+    const { stockName, price, quantity, profit, loss } = req.body;
 
-    const updated = await Stock.findByIdAndUpdate(
-      req.params.id,
-      {
-        stockName,
-        price: Number(price),
-        quantity: Number(quantity)
-      },
-      { new: true }
-    );
+    const stock = await Stock.findById(req.params.id);
+    if (!stock) return res.status(404).json({ msg: "Stock not found" });
 
-    res.json({ msg: "Stock updated", updated });
+    stock.stockName = stockName || stock.stockName;
+    stock.price = price !== undefined ? Number(price) : stock.price;
+    stock.quantity = quantity !== undefined ? Number(quantity) : stock.quantity;
+    stock.profit = profit !== undefined ? Number(profit) : stock.profit;
+    stock.loss = loss !== undefined ? Number(loss) : stock.loss;
+
+    const updated = await stock.save();
+    res.json({ msg: "Stock updated successfully", updated });
   } catch (error) {
     console.error("UPDATE STOCK ERROR:", error);
     res.status(500).json({ msg: "Server error while updating stock" });
   }
 });
 
-// -------------------- DELETE STOCK --------------------
+/* ===================== DELETE STOCK ===================== */
 router.delete("/:id", protect, adminProtect, async (req, res) => {
   try {
     await Stock.findByIdAndDelete(req.params.id);
-    res.json({ msg: "Stock deleted" });
+    res.json({ msg: "Stock deleted successfully" });
   } catch (error) {
     console.error("DELETE STOCK ERROR:", error);
     res.status(500).json({ msg: "Server error while deleting stock" });
   }
 });
 
-// -------------------- GET ALL STOCKS --------------------
+/* ===================== GET ALL STOCKS ===================== */
 router.get("/", protect, adminProtect, async (req, res) => {
   try {
     const stocks = await Stock.find().populate("user", "name email");
@@ -69,4 +71,5 @@ router.get("/", protect, adminProtect, async (req, res) => {
     res.status(500).json({ msg: "Server error while fetching stocks" });
   }
 });
+
 export default router;
