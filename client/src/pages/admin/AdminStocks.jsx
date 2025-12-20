@@ -246,17 +246,53 @@ export default function StockManagement() {
       {/* ADD STOCK */}
       <div className="p-6 mb-10 bg-white border shadow rounded-xl border-slate-200">
         <h2 className="mb-4 text-xl font-semibold text-slate-800">Add Stock</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-6">
-          <select value={newStock.userId} onChange={e => setNewStock({ ...newStock, userId: e.target.value })} className="p-3 border rounded-lg bg-slate-50">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-3">
+          {/* User Select */}
+          <select
+            value={newStock.userId}
+            onChange={e => setNewStock({ ...newStock, userId: e.target.value })}
+            className="col-span-6 p-3 border rounded-lg md:col-span-2 bg-slate-50"
+          >
             <option value="">Select User</option>
-            {users.map(u => <option key={u._id} value={u._id}>{u.name} — {u.email}</option>)}
+            {users.map(u => (
+              <option key={u._id} value={u._id}>
+                {u.name} — {u.email}
+              </option>
+            ))}
           </select>
-          <input type="text" placeholder="Stock Name" value={newStock.stockName} onChange={e => setNewStock({ ...newStock, stockName: e.target.value })} className="p-3 border rounded-lg bg-slate-50" />
-          <input type="number" placeholder="Price" value={newStock.price} onChange={e => setNewStock({ ...newStock, price: e.target.value })} className="p-3 border rounded-lg bg-slate-50" />
-          <input type="number" placeholder="Quantity" value={newStock.quantity} onChange={e => setNewStock({ ...newStock, quantity: e.target.value })} className="p-3 border rounded-lg bg-slate-50" />
-          <input type="number" placeholder="Profit" value={newStock.profit} onChange={e => setNewStock({ ...newStock, profit: e.target.value })} className="p-3 border rounded-lg bg-slate-50" />
-          <input type="number" placeholder="Loss" value={newStock.loss} onChange={e => setNewStock({ ...newStock, loss: e.target.value })} className="p-3 border rounded-lg bg-slate-50" />
+
+          {/* Stock Name */}
+          <input
+            type="text"
+            placeholder="Stock Name"
+            value={newStock.stockName}
+            onChange={e => setNewStock({ ...newStock, stockName: e.target.value })}
+            className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50"
+          />
+
+          {/* Price */}
+          <input
+            type="number"
+            placeholder="Price"
+            value={newStock.price}
+            onChange={e => setNewStock({ ...newStock, price: e.target.value })}
+            className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50"
+          />
+
+          {/* Quantity */}
+          <input
+            type="number"
+            placeholder="Quantity"
+            value={newStock.quantity}
+            onChange={e => setNewStock({ ...newStock, quantity: e.target.value })}
+            className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50"
+          />
+
+          {/* Optional Profit & Loss (commented for now) */}
+          {/* <input type="number" placeholder="Profit" value={newStock.profit} onChange={e => setNewStock({ ...newStock, profit: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" /> */}
+          {/* <input type="number" placeholder="Loss" value={newStock.loss} onChange={e => setNewStock({ ...newStock, loss: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" /> */}
         </div>
+
         <button onClick={handleAddStock} className="flex items-center gap-2 px-5 py-3 mt-4 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700"><Plus size={18} /> Add Stock</button>
       </div>
 
