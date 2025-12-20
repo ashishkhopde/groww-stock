@@ -6,7 +6,10 @@ import {
   Shield,
   Ban,
   Unlock,
-  UserCog
+  UserCog,
+  XCircle,
+  Clock,
+  FileWarning,
 } from "lucide-react";
 
 export default function ManageUsers() {
@@ -34,28 +37,6 @@ export default function ManageUsers() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Approve KYC
-  const approveKYC = async (id) => {
-    await API.put(
-      `/admin/users/kyc-approve/${id}`,
-      {},
-      { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
-    );
-
-    setUsers(users.map((u) => (u._id === id ? { ...u, kycApproved: true } : u)));
-  };
-
-  // Reject KYC
-  const rejectKYC = async (id) => {
-    await API.put(
-      `/admin/users/kyc-reject/${id}`,
-      {},
-      { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
-    );
-
-    setUsers(users.map((u) => (u._id === id ? { ...u, kycApproved: false } : u)));
-  };
-
   // Block / Unblock User
   const toggleBlock = async (id) => {
     await API.put(
@@ -71,13 +52,44 @@ export default function ManageUsers() {
     );
   };
 
+  // Render KYC status badge
+  const renderKYCStatus = (status) => {
+    switch (status) {
+      case "approved":
+        return (
+          <span className="flex items-center gap-1 font-semibold text-emerald-600">
+            <CheckCircle size={16} /> Approved
+          </span>
+        );
+      case "pending":
+        return (
+          <span className="flex items-center gap-1 font-semibold text-amber-600">
+            <Clock size={16} /> Pending
+          </span>
+        );
+      case "rejected":
+        return (
+          <span className="flex items-center gap-1 font-semibold text-rose-600">
+            <XCircle size={16} /> Rejected
+          </span>
+        );
+      case "not_submitted":
+      default:
+        return (
+          <span className="flex items-center gap-1 font-semibold text-slate-500">
+            <FileWarning size={16} /> Not Submitted
+          </span>
+        );
+    }
+  };
+
   if (loading) return <div className="p-10">Loading users...</div>;
 
   return (
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+        <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
           <Users size={28} className="text-emerald-600" />
           Manage Users
         </h1>
@@ -86,9 +98,9 @@ export default function ManageUsers() {
         </p>
       </div>
 
-      <div className="bg-white shadow-lg border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="overflow-hidden bg-white border shadow-lg border-slate-200 rounded-2xl">
         <table className="w-full text-sm">
-          <thead className="bg-slate-100 text-slate-600 uppercase text-xs">
+          <thead className="text-xs uppercase bg-slate-100 text-slate-600">
             <tr>
               <th className="p-4 text-left">User</th>
               <th className="p-4 text-left">Email</th>
@@ -102,7 +114,7 @@ export default function ManageUsers() {
             {users.map((u) => (
               <tr
                 key={u._id}
-                className="border-t border-slate-200 hover:bg-slate-50 transition"
+                className="transition border-t border-slate-200 hover:bg-slate-50"
               >
                 {/* User */}
                 <td className="p-4 font-medium text-slate-800">
@@ -119,49 +131,51 @@ export default function ManageUsers() {
                 <td className="p-4">{u.email}</td>
 
                 {/* KYC Status */}
-                <td className="p-4">
-                  {u.kycApproved ? (
-                    <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                      <CheckCircle size={16} /> Approved
-                    </span>
-                  ) : (
-                    <span className="text-amber-600 font-semibold flex items-center gap-1">
-                      <Shield size={16} /> Pending
-                    </span>
-                  )}
-                </td>
+                <td className="p-4">{renderKYCStatus(u.kycStatus)}</td>
 
                 {/* Blocked Status */}
                 <td className="p-4">
                   {u.blocked ? (
-                    <span className="text-rose-600 font-semibold flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-semibold text-rose-600">
                       <Ban size={16} /> Blocked
                     </span>
                   ) : (
-                    <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-semibold text-emerald-600">
                       <Unlock size={16} /> Active
                     </span>
                   )}
                 </td>
 
                 {/* Actions */}
-                <td className="p-4 text-right space-x-2">
-                  {!u.kycApproved ? (
+                <td className="p-4 space-x-2 text-right">
+                  {/* KYC Actions */}
+                  {u.kycStatus === "pending" && (
+                    <>
+                      <button
+                        onClick={() => (window.location.href = `/admin/kyc/${u._id}`)}
+                        className="px-3 py-1 text-xs text-white rounded-lg bg-emerald-600"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => (window.location.href = `/admin/kyc/${u._id}`)}
+                        className="px-3 py-1 text-xs text-white rounded-lg bg-rose-600"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+
+                  {u.kycStatus === "rejected" && (
                     <button
-                      onClick={() => approveKYC(u._id)}
-                      className="px-3 py-1 text-xs bg-emerald-600 text-white rounded-lg"
+                      onClick={() => (window.location.href = `/admin/kyc/${u._id}`)}
+                      className="px-3 py-1 text-xs text-white rounded-lg bg-emerald-600"
                     >
-                      Approve KYC
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => rejectKYC(u._id)}
-                      className="px-3 py-1 text-xs bg-amber-600 text-white rounded-lg"
-                    >
-                      Reject
+                      Re-Approve
                     </button>
                   )}
 
+                  {/* Block/Unblock */}
                   <button
                     onClick={() => toggleBlock(u._id)}
                     className={`px-3 py-1 text-xs rounded-lg ${
@@ -171,7 +185,7 @@ export default function ManageUsers() {
                     {u.blocked ? "Unblock" : "Block"}
                   </button>
 
-                  <button className="px-3 py-1 text-xs bg-indigo-600 text-white rounded-lg">
+                  <button className="px-3 py-1 text-xs text-white bg-indigo-600 rounded-lg">
                     <UserCog size={14} />
                   </button>
                 </td>

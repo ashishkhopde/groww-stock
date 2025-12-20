@@ -5,29 +5,30 @@ import {protect, adminProtect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-  phone: String,
-  aadhaar: String,
-  pan: String,
-  bankAccount: String,
-  wallet: { type: Number, default: 0 },
-  kycStatus: {
-    type: String,
-    enum: ["pending", "approved", "rejected"],
-    default: "pending"
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false
-  }
-}, { timestamps: true });
+// const UserSchema = new mongoose.Schema({
+//   name: String,
+//   email: String,
+//   password: String,
+//   phone: String,
+//   aadhaar: String,
+//   pan: String,
+//   bankAccount: String,
+//   wallet: { type: Number, default: 0 },
+//   kycStatus: {
+//     type: String,
+//     enum: ["pending", "approved", "rejected"],
+//     default: "pending"
+//   },
+//   isAdmin: {
+//     type: Boolean,
+//     default: false
+//   }
+// }, { timestamps: true });
 
 // GET ALL USERS
 router.get("/",protect, adminProtect, async (req, res) => {
   const users = await User.find({});
+  console.log(users);
   res.json(users);
 });
 

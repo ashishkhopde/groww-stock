@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -14,8 +14,8 @@ export default function PrivateRoute({ children }) {
     return (
       <DashboardLayout>
         <div className="p-10 text-center">
-          <h1 className="text-2xl font-bold text-emerald-600">
-            KYC Submitted Successfully 🎉
+          <h1 className="text-2xl font-bold text-center text-emerald-600">
+            KYC Submitted Successfully 🎉<br />
             Pending Verification
           </h1>
           <p className="mt-2 text-slate-600">

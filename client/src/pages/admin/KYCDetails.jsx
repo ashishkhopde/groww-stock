@@ -15,7 +15,7 @@ export default function KYCDetails() {
 
   if (!user)
     return (
-      <div className="p-10 flex items-center gap-2">
+      <div className="flex items-center gap-2 p-10">
         <Loader className="animate-spin" /> Loading...
       </div>
     );
@@ -39,44 +39,44 @@ const reject = async () => {
   return (
     <div className="p-8">
 
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">
+      <h1 className="mb-6 text-2xl font-bold text-slate-900">
         KYC Details for {user.name}
       </h1>
 
-      <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-6">
+      <div className="p-6 space-y-6 bg-white border shadow-sm rounded-xl border-slate-200">
 
        <div>
-  <p className="text-slate-600 text-sm">Phone</p>
+  <p className="text-sm text-slate-600">Phone</p>
   <p>{user.kyc?.mobile}</p>
 </div>
 
 <div>
-  <p className="text-slate-600 text-sm">Aadhaar</p>
+  <p className="text-sm text-slate-600">Aadhaar</p>
   <p>{user.kyc?.aadhaar}</p>
 </div>
 
 <div>
-  <p className="text-slate-600 text-sm">PAN</p>
+  <p className="text-sm text-slate-600">PAN</p>
   <p>{user.kyc?.pan}</p>
 </div>
 
 <div>
-  <p className="text-slate-600 text-sm">Bank Account</p>
+  <p className="text-sm text-slate-600">Bank Account</p>
   <p>{user.kyc?.bankAccount}</p>
 </div>
 
 <div>
-  <p className="text-slate-600 text-sm">IFSC</p>
+  <p className="text-sm text-slate-600">IFSC</p>
   <p>{user.kyc?.ifsc}</p>
 </div>
 
 <div>
-  <p className="text-slate-600 text-sm">Date of Birth</p>
+  <p className="text-sm text-slate-600">Date of Birth</p>
   <p>{user.kyc?.dob}</p>
 </div>
 
 <div>
-  <p className="text-slate-600 text-sm">Address</p>
+  <p className="text-sm text-slate-600">Address</p>
   <p>{user.kyc?.address}</p>
 </div>
 
@@ -92,14 +92,14 @@ const reject = async () => {
       <div className="flex gap-4 mt-10">
         <button
           onClick={approve}
-          className="px-6 py-3 bg-emerald-600 text-white rounded-lg flex items-center gap-2"
+          className="flex items-center gap-2 px-6 py-3 text-white rounded-lg bg-emerald-600"
         >
           <CheckCircle size={20} /> Approve KYC
         </button>
 
         <button
           onClick={reject}
-          className="px-6 py-3 bg-rose-600 text-white rounded-lg flex items-center gap-2"
+          className="flex items-center gap-2 px-6 py-3 text-white rounded-lg bg-rose-600"
         >
           <XCircle size={20} /> Reject KYC
         </button>

@@ -112,7 +112,7 @@ router.post("/verify-email-otp", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    console.log(user);
+    // console.log(user);
 
     res.json({
       msg: "Email verified! Registration complete 🎉",
