@@ -82,7 +82,7 @@ export default function ModernDashboard() {
           </div>
 
           {/* STATS CARDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 mb-6">
 
             <StatCard
               title="Total Balance"
@@ -105,6 +105,18 @@ export default function ModernDashboard() {
               color="rose"
             />
 
+            <StatCard
+              title="Total Transactions"
+              value={transactions.length}
+              icon={<Users size={22} />}
+              color="purple"
+            />
+            <StatCard
+              title="Total Transactions"
+              value={transactions.length}
+              icon={<Users size={22} />}
+              color="purple"
+            />
             <StatCard
               title="Total Transactions"
               value={transactions.length}
