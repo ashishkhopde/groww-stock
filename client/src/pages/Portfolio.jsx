@@ -3,7 +3,7 @@ import { ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import API from "../api/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
 
-import DashboardNavbar from "../components/Navbar.jsx";
+// import DashboardNavbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import TickerStrip from "../components/TickerStrip.jsx";
 
@@ -47,9 +47,9 @@ export default function Portfolio() {
       <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
 
         {/* DASHBOARD NAVBAR */}
-        <DashboardNavbar
+        {/* <DashboardNavbar
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        />
+        /> */}
 
         {/* TICKER STRIP */}
         <TickerStrip />

@@ -137,7 +137,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../api/axios";
 
 /* ✅ ADDED */
-import DashboardNavbar from "../components/Navbar.jsx";
+// import DashboardNavbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import TickerStrip from "../components/TickerStrip.jsx";
 
@@ -210,7 +210,7 @@ export default function WalletHistory() {
       <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
 
         {/* ✅ HEADER */}
-        <DashboardNavbar />
+        {/* <DashboardNavbar /> */}
 
         {/* ✅ TICKER */}
         <TickerStrip />

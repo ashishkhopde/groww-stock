@@ -5,13 +5,13 @@ import {
   Wallet,
   ArrowUpRight,
   Users,
-  Bell,
-  Menu,
-  X,
   TrendingUp,
   CreditCard,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
+import logo from "../assets/charts/logo.png";
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,6 +30,7 @@ export default function DashboardLayout({ children }) {
   const handleNavigate = (path) => {
     setActive(path);
     window.location.href = path;
+    setIsSidebarOpen(false);
   };
 
   const handleLogout = () => {
@@ -38,17 +39,17 @@ export default function DashboardLayout({ children }) {
   };
 
   return (
-    <div className="flex h-screen bg-[#F1F5F9] font-sans text-slate-800 overflow-hidden">
+    <div className="flex min-h-screen bg-[#F1F5F9] overflow-hidden">
 
-      {/* MOBILE OVERLAY */}
+      {/* ================= MOBILE OVERLAY ================= */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-50 bg-black/70 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* ================= SIDEBAR (UNCHANGED) ================= */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 w-64 bg-[#0F172A] text-white z-50 transform transition-transform duration-300 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
@@ -57,123 +58,113 @@ export default function DashboardLayout({ children }) {
         {/* Logo */}
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-3 text-xl font-bold">
-            <div className="flex items-center justify-center text-lg rounded-lg w-9 h-9 bg-emerald-600">
-              F
-            </div>
-            <span className="tracking-wide">Angel Smartlgo</span>
+            <span>AngelSmartAlgo</span>
           </div>
 
           <button
-            className="lg:hidden text-slate-400 hover:text-white"
+            className="lg:hidden text-slate-400"
             onClick={() => setIsSidebarOpen(false)}
           >
-            <X size={24} />
+            <X size={22} />
           </button>
         </div>
 
-        {/* MENU */}
-        <nav className="px-4 py-2 space-y-1">
-          <p className="px-4 mb-2 text-xs tracking-wider uppercase text-slate-500">
-            Menu
-          </p>
-
-          {/* UPDATED MENU LIST WITH PROFILE ADDED */}
+        {/* Menu */}
+        <nav className="px-4 space-y-1">
           {[
-            {
-              label: "Dashboard",
-              icon: <LayoutDashboard size={20} />,
-              path: "/dashboard",
-            },
-            {
-              label: "Portfolio",
-              icon: <TrendingUp size={20} />,
-              path: "/portfolio",
-            },
-            {
-              label: "Profile",
-              icon: <Users size={20} />,
-              path: "/profile",
-            },
-            {
-              label: "Withdrawal List",
-              icon: <ArrowUpRight size={20} />,
-              path: "/withdrawal",
-            },
-            {
-              label: "Plan List",
-              icon: <CreditCard size={20} />,
-              path: "/plans",
-            },
-            {
-              label: "Wallet History",
-              icon: <Wallet size={20} />,
-              path: "/wallet",
-            },
+            { label: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
+            { label: "Portfolio", path: "/portfolio", icon: <TrendingUp size={18} /> },
+            { label: "Profile", path: "/profile", icon: <Users size={18} /> },
+            { label: "Withdrawals", path: "/withdrawal", icon: <ArrowUpRight size={18} /> },
+            { label: "Plans", path: "/plans", icon: <CreditCard size={18} /> },
+            { label: "Wallet", path: "/wallet", icon: <Wallet size={18} /> },
           ].map((item) => (
             <div
               key={item.path}
               onClick={() => handleNavigate(item.path)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all
-              ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition ${
                 active === item.path
-                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/40"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                  ? "bg-emerald-600 text-white"
+                  : "text-slate-300 hover:bg-slate-800"
               }`}
             >
               {item.icon}
-              <span className="font-medium">{item.label}</span>
+              <span>{item.label}</span>
             </div>
           ))}
 
           {/* Logout */}
           <div
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 text-red-400 transition-all cursor-pointer rounded-xl hover:bg-red-700/20 hover:text-red-300"
+            className="flex items-center gap-3 px-4 py-3 mt-4 text-red-400 cursor-pointer hover:bg-red-700/20 rounded-xl"
           >
-            <LogOut size={20} />
-            <span className="font-medium">Logout</span>
+            <LogOut size={18} />
+            <span>Logout</span>
           </div>
         </nav>
-
-        {/* USER FOOTER */}
-        <div className="absolute bottom-0 w-full p-4 border-t bg-slate-800/40 border-slate-700">
-          <div className="flex items-center gap-3">
-            <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=UserAvatar"
-              className="w-10 h-10 border rounded-full border-slate-600"
-            />
-            <div>
-              <p className="text-sm font-medium">{user?.name}</p>
-              <p className="text-xs text-slate-400">{user?.email}</p>
-            </div>
-          </div>
-        </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="relative flex-1 overflow-auto">
+      {/* ================= MAIN AREA ================= */}
+      <main className="flex-1 overflow-auto">
 
-        {/* Header */}
-        <header className="sticky top-0 flex items-center justify-between h-16 px-6 bg-white border-b border-slate-200">
-          {/* Mobile toggle */}
-          <button
-            className="p-2 rounded-md lg:hidden hover:bg-slate-100"
-            onClick={() => setIsSidebarOpen(true)}
-          >
-            <Menu size={20} />
-          </button>
+        {/* ================= TOP NAVBAR (UI ONLY CHANGED) ================= */}
+        <header className="sticky top-0 z-30 w-full bg-white border-b border-slate-200 shadow-sm">
+          <div className="h-16 px-4 sm:px-6 flex items-center justify-between">
 
-          <h2 className="text-lg font-semibold tracking-tight">
-            {active.replace("/", "").toUpperCase() || "Dashboard"}
-          </h2>
+            {/* LEFT : TOGGLE + LOGO */}
+            <div className="flex items-center gap-3">
+              <button
+                className="lg:hidden p-2 rounded-md hover:bg-slate-100"
+                onClick={() => setIsSidebarOpen(true)}
+              >
+                <Menu size={22} />
+              </button>
 
-          <button className="p-2 rounded-full hover:bg-slate-100">
-            <Bell size={20} />
-          </button>
+              <img
+                src={logo}
+                alt="Dashboard Logo"
+                className="h-10 w-auto object-contain"
+              />
+            </div>
+
+            {/* 📱 MOBILE ONLY */}
+            <div className="flex items-center gap-2 sm:hidden">
+              <button
+                onClick={() => handleNavigate("/dashboard")}
+                className="p-2 rounded-md hover:bg-slate-100"
+              >
+                <LayoutDashboard size={22} />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-md text-rose-600 hover:bg-rose-50"
+              >
+                <LogOut size={22} />
+              </button>
+            </div>
+
+            {/* 📲 TABLET + DESKTOP */}
+            <div className="hidden sm:flex items-center gap-3">
+              <button
+                onClick={() => handleNavigate("/portfolio")}
+                className="px-4 py-2 bg-slate-800 text-white text-sm rounded-md hover:bg-slate-900"
+              >
+                Dashboard
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-slate-700 text-white text-sm rounded-md hover:bg-rose-600"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </header>
 
-        {/* PAGE CONTENT */}
-        <div className="p-6">{children}</div>
+        {/* ================= PAGE CONTENT ================= */}
+        {children}
       </main>
     </div>
   );

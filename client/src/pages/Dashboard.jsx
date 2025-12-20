@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 /* ✅ COMPONENTS */
-import DashboardNavbar from "../components/Navbar.jsx";
+// import DashboardNavbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import TickerStrip from "../components/TickerStrip.jsx";
 
@@ -63,7 +63,7 @@ export default function ModernDashboard() {
       <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
 
         {/* HEADER */}
-        <DashboardNavbar />
+        {/* <DashboardNavbar /> */}
 
         {/* TICKER */}
         <TickerStrip />

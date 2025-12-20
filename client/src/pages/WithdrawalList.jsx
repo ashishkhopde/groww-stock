@@ -4,7 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { ArrowUpRight, Clock, XCircle, CheckCircle } from "lucide-react";
 
 /* ✅ ADDED */
-import DashboardNavbar from "../components/Navbar.jsx";
+// import DashboardNavbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import TickerStrip from "../components/TickerStrip.jsx";
 
@@ -54,7 +54,7 @@ export default function WithdrawalList() {
       <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
 
         {/* ✅ HEADER */}
-        <DashboardNavbar />
+        {/* <DashboardNavbar /> */}
 
         {/* ✅ TICKER */}
         <TickerStrip />
