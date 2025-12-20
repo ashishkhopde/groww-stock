@@ -185,7 +185,7 @@
 
 import { useState, useEffect } from "react";
 import API from "../../api/axios";
-import { Plus, Trash2, Edit3 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 export default function StockManagement() {
   const [stocks, setStocks] = useState([]);
@@ -201,40 +201,65 @@ export default function StockManagement() {
     loss: ""
   });
 
-  // Fetch users + stocks
-  useEffect(() => {
-    Promise.all([
-      API.get("/admin/users", { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }),
-      API.get("/admin/stocks", { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } })
-    ]).then(([usersRes, stocksRes]) => {
+  // ------------------- Fetch Stocks & Users -------------------
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [usersRes, stocksRes] = await Promise.all([
+        API.get("/admin/users", { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }),
+        API.get("/admin/stocks", { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } })
+      ]);
       setUsers(usersRes.data);
       setStocks(stocksRes.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  const handleAddStock = () => {
+  // ------------------- Add Stock -------------------
+  const handleAddStock = async () => {
     if (!newStock.userId || !newStock.stockName || !newStock.price || !newStock.quantity) {
       alert("Fill all required fields");
       return;
     }
 
-    API.post("/admin/stocks/add", newStock, { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } })
-      .then(res => {
-        setStocks([res.data.stock, ...stocks]);
-        setNewStock({ userId: "", stockName: "", price: "", quantity: "", profit: "", loss: "" });
-      });
+    try {
+      await API.post("/admin/stocks/add", newStock, { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } });
+      setNewStock({ userId: "", stockName: "", price: "", quantity: "", profit: "", loss: "" });
+
+      // 🔄 Refetch stocks after adding
+      fetchData();
+    } catch (error) {
+      console.error("Error adding stock:", error);
+    }
   };
 
-  const handleDeleteStock = id => {
+  // ------------------- Delete Stock -------------------
+  const handleDeleteStock = async (id) => {
     if (!window.confirm("Delete this stock?")) return;
-    API.delete(`/admin/stocks/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } })
-      .then(() => setStocks(stocks.filter(s => s._id !== id)));
+
+    try {
+      await API.delete(`/admin/stocks/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } });
+      fetchData(); // 🔄 Refetch after deletion
+    } catch (error) {
+      console.error("Error deleting stock:", error);
+    }
   };
 
-  const handleUpdateStock = (id, updatedFields) => {
-    API.put(`/admin/stocks/${id}`, updatedFields, { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } })
-      .then(res => setStocks(stocks.map(s => s._id === id ? res.data.updated : s)));
+  // ------------------- Update Stock -------------------
+  const handleUpdateStock = async (id, updatedFields) => {
+    try {
+      await API.put(`/admin/stocks/${id}`, updatedFields, { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } });
+      fetchData(); // 🔄 Refetch after update
+    } catch (error) {
+      console.error("Error updating stock:", error);
+    }
   };
 
   if (loading) return <div className="p-10">Loading Stocks...</div>;
@@ -243,54 +268,24 @@ export default function StockManagement() {
     <div className="p-8">
       <h1 className="mb-4 text-3xl font-bold text-slate-900">Stock Management</h1>
 
-      {/* ADD STOCK */}
+      {/* ADD STOCK FORM */}
       <div className="p-6 mb-10 bg-white border shadow rounded-xl border-slate-200">
         <h2 className="mb-4 text-xl font-semibold text-slate-800">Add Stock</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-3">
-          {/* User Select */}
           <select
             value={newStock.userId}
             onChange={e => setNewStock({ ...newStock, userId: e.target.value })}
             className="col-span-6 p-3 border rounded-lg md:col-span-2 bg-slate-50"
           >
             <option value="">Select User</option>
-            {users.map(u => (
-              <option key={u._id} value={u._id}>
-                {u.name} — {u.email}
-              </option>
-            ))}
+            {users.map(u => <option key={u._id} value={u._id}>{u.name} — {u.email}</option>)}
           </select>
-
-          {/* Stock Name */}
-          <input
-            type="text"
-            placeholder="Stock Name"
-            value={newStock.stockName}
-            onChange={e => setNewStock({ ...newStock, stockName: e.target.value })}
-            className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50"
-          />
-
-          {/* Price */}
-          <input
-            type="number"
-            placeholder="Price"
-            value={newStock.price}
-            onChange={e => setNewStock({ ...newStock, price: e.target.value })}
-            className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50"
-          />
-
-          {/* Quantity */}
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={newStock.quantity}
-            onChange={e => setNewStock({ ...newStock, quantity: e.target.value })}
-            className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50"
-          />
-
-          {/* Optional Profit & Loss (commented for now) */}
-          {/* <input type="number" placeholder="Profit" value={newStock.profit} onChange={e => setNewStock({ ...newStock, profit: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" /> */}
-          {/* <input type="number" placeholder="Loss" value={newStock.loss} onChange={e => setNewStock({ ...newStock, loss: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" /> */}
+          <input type="text" placeholder="Stock Name" value={newStock.stockName} onChange={e => setNewStock({ ...newStock, stockName: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" />
+          <input type="number" placeholder="Price" value={newStock.price} onChange={e => setNewStock({ ...newStock, price: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" />
+          <input type="number" placeholder="Quantity" value={newStock.quantity} onChange={e => setNewStock({ ...newStock, quantity: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-slate-50" />
+          {/* Optional Profit & Loss */}
+          {/* <input type="number" placeholder="Profit" value={newStock.profit} onChange={e => setNewStock({ ...newStock, profit: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-emerald-50 text-emerald-600" />
+          <input type="number" placeholder="Loss" value={newStock.loss} onChange={e => setNewStock({ ...newStock, loss: e.target.value })} className="col-span-6 p-3 border rounded-lg md:col-span-1 bg-rose-50 text-rose-600" /> */}
         </div>
 
         <button onClick={handleAddStock} className="flex items-center gap-2 px-5 py-3 mt-4 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700"><Plus size={18} /> Add Stock</button>
@@ -315,21 +310,11 @@ export default function StockManagement() {
               <tr key={s._id} className="border-t hover:bg-slate-50">
                 <td className="p-4">{s.user?.name}</td>
                 <td className="p-4 font-semibold text-slate-800">{s.stockName}</td>
-                <td className="p-4">
-                  <input type="number" defaultValue={s.quantity} onBlur={e => handleUpdateStock(s._id, { quantity: e.target.value })} className="w-24 p-2 border rounded-lg bg-slate-50" />
-                </td>
-                <td className="p-4">
-                  <input type="number" defaultValue={s.price} onBlur={e => handleUpdateStock(s._id, { price: e.target.value })} className="w-24 p-2 border rounded-lg bg-slate-50" />
-                </td>
-                <td className="p-4">
-                  <input type="number" defaultValue={s.profit} onBlur={e => handleUpdateStock(s._id, { profit: e.target.value })} className="w-24 p-2 border rounded-lg bg-emerald-50 text-emerald-600" />
-                </td>
-                <td className="p-4">
-                  <input type="number" defaultValue={s.loss} onBlur={e => handleUpdateStock(s._id, { loss: e.target.value })} className="w-24 p-2 border rounded-lg bg-rose-50 text-rose-600" />
-                </td>
-                <td className="p-4 text-right">
-                  <button onClick={() => handleDeleteStock(s._id)} className="flex items-center gap-1 px-3 py-2 text-white rounded-lg bg-rose-600 hover:bg-rose-700"><Trash2 size={16} /> Delete</button>
-                </td>
+                <td className="p-4"><input type="number" defaultValue={s.quantity} onBlur={e => handleUpdateStock(s._id, { quantity: e.target.value })} className="w-24 p-2 border rounded-lg bg-slate-50" /></td>
+                <td className="p-4"><input type="number" defaultValue={s.price} onBlur={e => handleUpdateStock(s._id, { price: e.target.value })} className="w-24 p-2 border rounded-lg bg-slate-50" /></td>
+                <td className="p-4"><input type="number" defaultValue={s.profit} onBlur={e => handleUpdateStock(s._id, { profit: e.target.value })} className="w-24 p-2 border rounded-lg bg-emerald-50 text-emerald-600" /></td>
+                <td className="p-4"><input type="number" defaultValue={s.loss} onBlur={e => handleUpdateStock(s._id, { loss: e.target.value })} className="w-24 p-2 border rounded-lg bg-rose-50 text-rose-600" /></td>
+                <td className="p-4 text-right"><button onClick={() => handleDeleteStock(s._id)} className="flex items-center gap-1 px-3 py-2 text-white rounded-lg bg-rose-600 hover:bg-rose-700"><Trash2 size={16} /> Delete</button></td>
               </tr>
             ))}
           </tbody>
