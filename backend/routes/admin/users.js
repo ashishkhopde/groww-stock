@@ -62,4 +62,27 @@ router.post("/stocks/:id", protect, adminProtect, async (req, res) => {
   res.json({ msg: "Stock added to user" });
 });
 
+// PATCH /api/admin/users/toggle-block/:id
+router.patch("/toggle-block/:id", protect, adminProtect, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    // Toggle the block status
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    res.status(200).json({
+      msg: `User has been ${user.isBlocked ? "blocked" : "unblocked"} successfully`,
+      isBlocked: user.isBlocked,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+
 export default router;

@@ -11,10 +11,13 @@ import {
   Clock,
   FileWarning,
 } from "lucide-react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   // Fetch Users
   useEffect(() => {
@@ -39,7 +42,7 @@ export default function ManageUsers() {
 
   // Block / Unblock User
   const toggleBlock = async (id) => {
-    await API.put(
+    await API.patch(
       `/admin/users/toggle-block/${id}`,
       {},
       { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
@@ -51,6 +54,10 @@ export default function ManageUsers() {
       )
     );
   };
+
+  const handleUser = (id) => {
+    navigate(`/admin/kyc/${id}`);
+  }
 
   // Render KYC status badge
   const renderKYCStatus = (status) => {
@@ -178,16 +185,15 @@ export default function ManageUsers() {
                   {/* Block/Unblock */}
                   <button
                     onClick={() => toggleBlock(u._id)}
-                    className={`px-3 py-1 text-xs rounded-lg ${
-                      u.blocked ? "bg-emerald-600" : "bg-rose-600"
-                    } text-white`}
+                    className={`px-3 py-1 text-xs rounded-lg ${u.blocked ? "bg-emerald-600" : "bg-rose-600"
+                      } text-white`}
                   >
                     {u.blocked ? "Unblock" : "Block"}
                   </button>
 
-                  <button className="px-3 py-1 text-xs text-white bg-indigo-600 rounded-lg">
-                    <UserCog size={14} />
-                  </button>
+                    <button className="px-3 py-1 text-xs text-white bg-indigo-600 rounded-lg" onClick={()=>handleUser(u._id)}>
+                      <UserCog size={14} />
+                    </button>
                 </td>
               </tr>
             ))}

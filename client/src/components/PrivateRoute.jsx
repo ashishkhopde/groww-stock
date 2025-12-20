@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import API from "../api/axios";
+import { Ban } from "lucide-react";
 
 export default function PrivateRoute({ children }) {
   const [userData, setUserData] = useState(() => {
@@ -84,6 +85,21 @@ export default function PrivateRoute({ children }) {
           </h1>
           <p className="mt-2 text-slate-600">
             Please wait for admin approval. You will be notified once verified.
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+  
+  if (userData.isBlocked) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center p-10">
+          <h1 className="flex items-center justify-center text-2xl font-bold text-emerald-600">
+            You are Blocked &nbsp; <Ban size={20} className="text-red-600"/>
+          </h1>
+          <p className="mt-2 text-slate-600">
+            Please content to admin.
           </p>
         </div>
       </DashboardLayout>

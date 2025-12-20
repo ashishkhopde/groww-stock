@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
+    isBlocked : {
+      type : Boolean,
+      default : false
+    },
+
     // ✅ Added Transactions Array
     transactions: [
       {
