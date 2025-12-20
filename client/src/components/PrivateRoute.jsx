@@ -91,6 +91,21 @@ export default function PrivateRoute({ children }) {
     );
   }
   
+  if (userData.kycStatus === "rejected") {
+    return (
+      <DashboardLayout>
+        <div className="p-10 text-center">
+          <h1 className="text-2xl font-bold text-emerald-600">
+            KYC Verification Is Rejected
+          </h1>
+          <p className="mt-2 text-slate-600">
+            Please contect to admin approval.
+          </p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+  
   if (userData.isBlocked) {
     return (
       <DashboardLayout>
