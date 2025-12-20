@@ -56,6 +56,7 @@ export default function KYCPage() {
       alert("submitted KYC");
     } catch (error) {
       alert("Error submitting KYC");
+      console.log(error);
     } finally {
       setLoading(false);
     }

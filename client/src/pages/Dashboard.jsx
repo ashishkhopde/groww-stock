@@ -69,11 +69,11 @@ export default function ModernDashboard() {
         <TickerStrip />
 
         {/* CONTENT */}
-        <div className="flex-grow px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="flex-grow w-full px-4 py-6 mx-auto sm:px-6 lg:px-8 max-w-7xl">
 
           {/* TITLE */}
           <div className="mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+            <h1 className="text-xl font-bold sm:text-2xl text-slate-900">
               Dashboard Overview
             </h1>
             <p className="text-sm sm:text-base text-slate-500">
@@ -82,7 +82,7 @@ export default function ModernDashboard() {
           </div>
 
           {/* STATS CARDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
 
             <StatCard
               title="Total Balance"
@@ -136,16 +136,16 @@ export default function ModernDashboard() {
           </div>
 
           {/* RECENT TRANSACTIONS */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-4 sm:p-6 border-b border-slate-100">
-              <h2 className="text-base sm:text-lg font-bold text-slate-800">
+          {/* <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
+            <div className="p-4 border-b sm:p-6 border-slate-100">
+              <h2 className="text-base font-bold sm:text-lg text-slate-800">
                 Recent Transactions
               </h2>
             </div>
 
             <div className="overflow-x-auto">
               <table className="min-w-[600px] w-full text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+                <thead className="text-xs font-semibold uppercase bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-4 py-3 text-left">Type</th>
                     <th className="px-4 py-3 text-left">Date</th>
@@ -156,7 +156,7 @@ export default function ModernDashboard() {
                 <tbody className="divide-y divide-slate-100">
                   {recent.map((tx) => (
                     <tr key={tx._id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3 font-semibold flex items-center gap-2">
+                      <td className="flex items-center gap-2 px-4 py-3 font-semibold">
                         {tx.type === "credit" ? (
                           <ArrowDownLeft size={16} className="text-emerald-600" />
                         ) : (
@@ -185,7 +185,7 @@ export default function ModernDashboard() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
 
         </div>
 
@@ -206,13 +206,13 @@ function StatCard({ title, value, icon, color }) {
   };
 
   return (
-    <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-sm">
-      <div className="flex justify-between items-start">
+    <div className="p-5 bg-white border shadow-sm sm:p-6 rounded-2xl border-slate-100">
+      <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs sm:text-sm font-medium text-slate-500 mb-1">
+          <p className="mb-1 text-xs font-medium sm:text-sm text-slate-500">
             {title}
           </p>
-          <h3 className="text-xl sm:text-2xl font-bold text-slate-800">
+          <h3 className="text-xl font-bold sm:text-2xl text-slate-800">
             {value}
           </h3>
         </div>
