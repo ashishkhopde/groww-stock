@@ -30,12 +30,12 @@ import AdminLayout from "./layouts/AdminLayout";
 
 // Middleware
 import AdminRoute from "./middleware/AdminRoute";
+import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -45,14 +45,15 @@ export default function App() {
         <Route path="/payment/:method" element={<PaymentPage />} />
 
         {/* User Authenticated */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<PrivateRoute>
+          <Dashboard />
+        </PrivateRoute>} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/plans" element={<PlanList />} />
         <Route path="/wallet" element={<WalletHistory />} />
         <Route path="/withdrawal" element={<WithdrawalList />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/deposit" element={<Deposit />} />
-
 
         {/* Admin Login (Public) */}
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -74,10 +75,7 @@ export default function App() {
           <Route path="stocks" element={<AdminStocks />} />
           <Route path="wallet" element={<AdminWallet />} />
           <Route path="payment-settings" element={<AdminPaymentSettings />} />
-
         </Route>
-
-
       </Routes>
     </BrowserRouter>
   );
