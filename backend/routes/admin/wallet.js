@@ -120,4 +120,14 @@ router.get("/history/:id", protect, adminProtect, async (req, res) => {
   }
 });
 
+router.get("/", protect, adminProtect, async (req, res) => {
+  try {
+    const Transactions = await WalletTransaction.find().sort({createdAt:-1}).populate("userId");
+    return res.json(Transactions);
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+})
+
 export default router;
