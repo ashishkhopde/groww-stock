@@ -48,12 +48,12 @@ export default function App() {
         <Route path="/dashboard" element={<PrivateRoute>
           <Dashboard />
         </PrivateRoute>} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/plans" element={<PlanList />} />
-        <Route path="/wallet" element={<WalletHistory />} />
-        <Route path="/withdrawal" element={<WithdrawalList />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/deposit" element={<Deposit />} />
+        <Route path="/portfolio" element={<PrivateRoute><Portfolio /></PrivateRoute>} />
+        <Route path="/plans" element={<PrivateRoute><PlanList /></PrivateRoute>} />
+        <Route path="/wallet" element={<PrivateRoute><WalletHistory /></PrivateRoute>} />
+        <Route path="/withdrawal" element={<PrivateRoute><WithdrawalList /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/deposit" element={<PrivateRoute><Deposit /></PrivateRoute>} />
 
         {/* Admin Login (Public) */}
         <Route path="/admin/login" element={<AdminLogin />} />
