@@ -1,4 +1,4 @@
-// routes/admin/wallet.js (or wherever your wallet routes live)
+// routes/admin/wallet.js
 import express from "express";
 import User from "../../models/User.js";
 import WalletTransaction from "../../models/WalletTransaction.js";
@@ -7,46 +7,60 @@ import { protect, adminProtect } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 /**
- * Existing update route (kept for backward compatibility)
- * Expects: { amount, type } where type = "add" or "deduct"
+ * ✅ Unified Wallet Update Route
+ * Expects: { amount, type, note }
+ * type = "credit" | "debit"
  */
 router.post("/update/:id", protect, adminProtect, async (req, res) => {
   try {
     const { amount, type, note } = req.body;
-    if (!amount || !type) return res.status(400).json({ message: "amount and type required" });
 
-    const incValue = type === "add" ? Number(amount) : -Number(amount);
+    if (!amount || !type)
+      return res.status(400).json({ message: "Amount and type are required" });
 
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { wallet: incValue } },
-      { new: true }
-    );
-
+    const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Handle credit or debit
+    if (type === "credit") {
+      user.wallet += Number(amount);
+    } else if (type === "debit") {
+      if (user.wallet < amount)
+        return res.status(400).json({ message: "Insufficient balance" });
+      user.wallet -= Number(amount);
+    } else {
+      return res.status(400).json({ message: "Invalid type value" });
+    }
+
+    await user.save();
+
+    // Log transaction
     await WalletTransaction.create({
-      userId: req.params.id,
-      type: type === "add" ? "credit" : "debit",
+      userId: user._id,
+      type,
       amount: Number(amount),
       note,
       status: "Success",
     });
 
-    res.json({ msg: "Wallet updated", wallet: user.wallet });
+    res.json({
+      msg: `Wallet ${type === "credit" ? "Credited" : "Debited"}`,
+      wallet: user.wallet,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("WALLET UPDATE ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 /**
- * New: Credit by admin (body: { userId, amount, note })
+ * ✅ Explicit Credit Route (optional)
  */
 router.post("/credit", protect, adminProtect, async (req, res) => {
   try {
     const { userId, amount, note } = req.body;
-    if (!userId || !amount) return res.status(400).json({ message: "userId and amount required" });
+    if (!userId || !amount)
+      return res.status(400).json({ message: "userId and amount required" });
 
     const user = await User.findByIdAndUpdate(
       userId,
@@ -66,28 +80,27 @@ router.post("/credit", protect, adminProtect, async (req, res) => {
 
     res.json({ msg: "Wallet Credited", wallet: user.wallet });
   } catch (err) {
-    console.error(err);
+    console.error("CREDIT ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 /**
- * New: Debit by admin (body: { userId, amount, note })
+ * ✅ Explicit Debit Route (optional)
  */
 router.post("/debit", protect, adminProtect, async (req, res) => {
   try {
     const { userId, amount, note } = req.body;
-    if (!userId || !amount) return res.status(400).json({ message: "userId and amount required" });
+    if (!userId || !amount)
+      return res.status(400).json({ message: "userId and amount required" });
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Optional: prevent negative balance
-    if (user.wallet - Number(amount) < 0) {
+    if (user.wallet < amount)
       return res.status(400).json({ message: "Insufficient balance" });
-    }
 
-    user.wallet = user.wallet - Number(amount);
+    user.wallet -= Number(amount);
     await user.save();
 
     await WalletTransaction.create({
@@ -100,34 +113,43 @@ router.post("/debit", protect, adminProtect, async (req, res) => {
 
     res.json({ msg: "Wallet Debited", wallet: user.wallet });
   } catch (err) {
-    console.error(err);
+    console.error("DEBIT ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 /**
- * GET history for a user (admin access)
- * Example: GET /admin/wallet/history/:userId
+ * ✅ Get Transaction History for Specific User
  */
 router.get("/history/:id", protect, adminProtect, async (req, res) => {
   try {
     const userId = req.params.id;
-    const history = await WalletTransaction.find({ userId }).sort({ createdAt: -1 }).limit(200);
+    const history = await WalletTransaction.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(200)
+      .populate("userId", "name email wallet");
+
     res.json(history);
   } catch (err) {
-    console.error(err);
+    console.error("GET HISTORY ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
+/**
+ * ✅ Get All Transactions (Admin Panel)
+ */
 router.get("/", protect, adminProtect, async (req, res) => {
   try {
-    const Transactions = await WalletTransaction.find().sort({createdAt:-1}).populate("userId");
-    return res.json(Transactions);
-  } catch (error) {
-    console.error(err);
+    const transactions = await WalletTransaction.find()
+      .sort({ createdAt: -1 })
+      .populate("userId", "name email wallet");
+
+    res.json(transactions);
+  } catch (err) {
+    console.error("GET ALL TRANSACTIONS ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
-})
+});
 
 export default router;
