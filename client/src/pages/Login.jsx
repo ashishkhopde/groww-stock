@@ -10,16 +10,29 @@ export default function Login() {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
     setLoading(true);
+    
     try {
+      
       const res = await API.post("/auth/login", form);
+      
       localStorage.setItem("token", res.data.token);
       // optional: save user info
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("userId", res.data.user.id);
+      
+      // console.log(res.data.user.kycStatus);
+      
+      if (res.data.user.kycStatus === "not_submitted") {
+        nav("/kyc");
+      } else {
+        nav("/dashboard");
+      }
+      
       alert("Login successful");
-      nav("/dashboard");
+      // nav("/dashboard");
     } catch (err) {
       alert(err.response?.data?.msg || "Login failed");
     } finally {
@@ -29,32 +42,32 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-md shadow-lg rounded-2xl p-8">
+      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-2xl">
         <h2 className="text-3xl font-bold text-center text-[#1e293b]">Welcome Back</h2>
-        <p className="text-center text-gray-600 mt-1">Login to continue</p>
+        <p className="mt-1 text-center text-gray-600">Login to continue</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>
-            <label className="text-gray-700 font-medium">Email</label>
+            <label className="font-medium text-gray-700">Email</label>
             <input
               name="email"
               value={form.email}
               onChange={handleChange}
               type="email"
-              className="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full px-4 py-3 mt-1 border outline-none rounded-xl focus:ring-2 focus:ring-emerald-500"
               placeholder="Enter email"
               required
             />
           </div>
 
           <div>
-            <label className="text-gray-700 font-medium">Password</label>
+            <label className="font-medium text-gray-700">Password</label>
             <input
               name="password"
               value={form.password}
               onChange={handleChange}
               type="password"
-              className="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+              className="w-full px-4 py-3 mt-1 border outline-none rounded-xl focus:ring-2 focus:ring-emerald-500"
               placeholder="Enter password"
               required
             />
@@ -62,16 +75,16 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-emerald-600 text-white rounded-xl text-lg hover:bg-emerald-700"
+            className="w-full py-3 text-lg text-white bg-emerald-600 rounded-xl hover:bg-emerald-700"
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-5">
+        <p className="mt-5 text-sm text-center text-gray-600">
           New user?{" "}
-          <Link to="/register" className="text-emerald-600 font-medium hover:underline">
+          <Link to="/register" className="font-medium text-emerald-600 hover:underline">
             Create account
           </Link>
         </p>

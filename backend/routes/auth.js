@@ -112,6 +112,8 @@ router.post("/verify-email-otp", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    console.log(user);
+
     res.json({
       msg: "Email verified! Registration complete 🎉",
       token,
@@ -119,6 +121,7 @@ router.post("/verify-email-otp", async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        kycStatus: user.kycStatus
       },
     });
 
@@ -156,6 +159,7 @@ router.post("/login", async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        kycStatus: user.kycStatus
       },
     });
 

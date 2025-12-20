@@ -62,7 +62,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
 dotenv.config();
-console.log("SERVER TEST:", process.env.MAIL_USER, process.env.MAIL_PASS);
+// console.log("SERVER TEST:", process.env.MAIL_USER, process.env.MAIL_PASS);
 
 const app = express();
 
