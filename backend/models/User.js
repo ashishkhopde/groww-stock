@@ -42,6 +42,16 @@ const userSchema = new mongoose.Schema(
       default : false
     },
 
+    referralBonus : {
+      type : Number,
+      default : 0
+    },
+
+    bonus : {
+      type : Number,
+      default : 0
+    },
+
     // ✅ Added Transactions Array
     transactions: [
       {

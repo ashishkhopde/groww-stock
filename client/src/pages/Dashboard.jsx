@@ -113,13 +113,13 @@ export default function ModernDashboard() {
             />
             <StatCard
               title="referral bonus"
-              value={transactions.length}
+              value={user.referralBonus}
               icon={<Users size={22} />}
               color="purple"
             />
             <StatCard
               title="bonus"
-              value={transactions.length}
+              value={user.bonus}
               icon={<Users size={22} />}
               color="purple"
             />
