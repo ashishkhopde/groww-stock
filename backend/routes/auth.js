@@ -178,4 +178,31 @@ router.get("/profile", protect, async (req, res) => {
   res.json(user);
 });
 
+router.put("/update-profile", protect, async (req, res) => {
+  try {
+    const { name, mobile, aadhaar, bankAccount } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // update main user info
+    if (name) user.name = name;
+
+    // if you store KYC details directly on user
+    user.kyc = user.kyc || {};
+    if (mobile) user.kyc.mobile = mobile;
+    if (aadhaar) user.kyc.aadhaar = aadhaar;
+    if (bankAccount) user.kyc.bankAccount = bankAccount;
+
+    await user.save();
+
+    res.json({ msg: "Profile updated successfully", user });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 export default router;
