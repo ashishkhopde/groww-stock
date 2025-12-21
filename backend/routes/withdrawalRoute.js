@@ -1,5 +1,5 @@
 import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
+import { adminProtect, protect } from "../middleware/authMiddleware.js";
 import WithdrawalRequest from "../models/WithdrawalRequest.js";
 
 const router = express.Router();
@@ -58,7 +58,7 @@ router.get("/my/:id", protect, async (req, res) => {
  * @desc    Get all withdrawal requests (Admin)
  * @access  Private (Admin)
  */
-router.get("/", protect, async (req, res) => {
+router.get("/", protect, adminProtect, async (req, res) => {
   try {
     // You can add admin check here if you have user.role
     const allRequests = await WithdrawalRequest.find()
@@ -77,7 +77,7 @@ router.get("/", protect, async (req, res) => {
  * @desc    Update withdrawal status (approve / reject)
  * @access  Private (Admin)
  */
-router.patch("/:id", protect, async (req, res) => {
+router.patch("/:id", protect, adminProtect, async (req, res) => {
   try {
     const { status, note } = req.body;
 

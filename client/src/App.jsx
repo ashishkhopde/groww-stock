@@ -32,6 +32,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminRoute from "./middleware/AdminRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import WithdrawalRequest from "./pages/WithdrawalRequest";
+import AdminWithdrawalRequests from "./pages/admin/AdminWithdrawalRequests";
 
 export default function App() {
   return (
@@ -77,6 +78,7 @@ export default function App() {
           <Route path="stocks" element={<AdminStocks />} />
           <Route path="wallet" element={<AdminWallet />} />
           <Route path="payment-settings" element={<AdminPaymentSettings />} />
+          <Route path="withdrawal" element={<AdminWithdrawalRequests />} />
         </Route>
       </Routes>
     </BrowserRouter>
