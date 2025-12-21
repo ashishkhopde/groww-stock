@@ -9,7 +9,8 @@ export default function Portfolio() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [current, setCurrent] = useState(0);
   const [invested, setInvested] = useState(0);
-  const [profit, setProfit] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [totalLoss, setTotalLoss] = useState(0);
   const [holdings, setHoldings] = useState([]);
 
   useEffect(() => {
@@ -36,21 +37,16 @@ export default function Portfolio() {
           loss: Number(s.loss) || 0,
         }));
 
-        const investedAmt = mapped.reduce(
-          (sum, s) => sum + s.buy * s.qty,
-          0
-        );
+        const investedAmt = mapped.reduce((sum, s) => sum + s.buy * s.qty, 0);
+        const profitAmt = mapped.reduce((sum, s) => sum + s.profit, 0);
+        const lossAmt = mapped.reduce((sum, s) => sum + s.loss, 0);
 
-        const totalProfit = mapped.reduce(
-          (sum, s) => sum + s.profit - s.loss,
-          0
-        );
-
-        const currentAmt = investedAmt + totalProfit;
+        const currentAmt = investedAmt + profitAmt - lossAmt;
 
         setHoldings(mapped);
         setInvested(investedAmt);
-        setProfit(totalProfit);
+        setTotalProfit(profitAmt);
+        setTotalLoss(lossAmt);
         setCurrent(currentAmt);
       } catch (error) {
         console.error("Error loading portfolio:", error);
@@ -76,10 +72,11 @@ export default function Portfolio() {
           </p>
 
           {/* SUMMARY */}
-          <div className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-4">
             <StatCard title="Total Value" value={`₹ ${current}`} />
             <StatCard title="Invested" value={`₹ ${invested}`} />
-            <StatCard title="Profit / Loss" value={`₹ ${profit}`} profit={profit} />
+            <StatCard title="Profit" value={`₹ ${totalProfit}`} profit={1} />
+            <StatCard title="Loss" value={`₹ ${totalLoss}`} profit={-1} />
           </div>
 
           {/* MY STOCKS */}
@@ -94,22 +91,21 @@ export default function Portfolio() {
           ) : (
             <div className="space-y-6">
               {holdings.map((stock) => {
-                const totalProfit = stock.profit - stock.loss;
+                const totalPL = stock.profit - stock.loss;
 
                 return (
                   <div
                     key={stock.id}
-                    className="bg-white rounded-xl shadow-md border border-slate-200 
-                               px-6 py-7 max-w-xl ml-0"
+                    className="max-w-xl px-6 ml-0 bg-white border shadow-md rounded-xl border-slate-200 py-7"
                   >
                     {/* TOP */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold text-slate-800">
                         {stock.symbol}
                       </p>
 
                       <p className="text-sm font-semibold text-slate-700">
-                        {Math.abs(totalProfit)}
+                        ₹{Math.abs(totalPL)}
                       </p>
                     </div>
 
@@ -118,24 +114,23 @@ export default function Portfolio() {
                       <span>
                         {stock.qty} Qty | Buy {stock.buy}
                       </span>
-
                       <span>
                         LTP 3.24 % | Sell {stock.buy + 20}
                       </span>
                     </div>
 
-                    {/* PROFIT */}
+                    {/* PROFIT / LOSS */}
                     <div className="flex justify-end mt-5">
                       <span
                         className={`text-sm font-bold ${
-                          totalProfit >= 0
+                          totalPL >= 0
                             ? "text-emerald-600"
                             : "text-rose-600"
                         }`}
                       >
-                        {totalProfit >= 0
-                          ? totalProfit
-                          : `-${Math.abs(totalProfit)}`}
+                        {totalPL >= 0
+                          ? `+₹${totalPL}`
+                          : `-₹${Math.abs(totalPL)}`}
                       </span>
                     </div>
                   </div>
