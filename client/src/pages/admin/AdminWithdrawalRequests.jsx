@@ -10,7 +10,7 @@ export default function AdminWithdrawalRequests() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const res = await API.get("/withdrawals", {
+        const res = await API.get("/admin/withdrawals", {
           headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
         });
         setRequests(res.data.allRequests || []);
@@ -31,7 +31,7 @@ export default function AdminWithdrawalRequests() {
 
     try {
       await API.patch(
-        `/withdrawals/${id}`,
+        `/admin/withdrawals/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
       );

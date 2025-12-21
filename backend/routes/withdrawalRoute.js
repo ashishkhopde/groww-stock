@@ -9,7 +9,7 @@ const router = express.Router();
  * @desc    Create a new withdrawal request
  * @access  Private (User)
  */
-router.post("/:id", protect, async (req, res) => {
+router.post("/withdrawals/:id", protect, async (req, res) => {
   try {
     const { amount, method, accountDetails, note } = req.body;
 
@@ -40,7 +40,7 @@ router.post("/:id", protect, async (req, res) => {
  * @desc    Get all withdrawal requests for logged-in user
  * @access  Private (User)
  */
-router.get("/my/:id", protect, async (req, res) => {
+router.get("/withdrawals/my/:id", protect, async (req, res) => {
   try {
     const requests = await WithdrawalRequest.find({ userId : req.params.id })
       .sort({ createdAt: -1 })
@@ -58,7 +58,7 @@ router.get("/my/:id", protect, async (req, res) => {
  * @desc    Get all withdrawal requests (Admin)
  * @access  Private (Admin)
  */
-router.get("/", protect, adminProtect, async (req, res) => {
+router.get("/admin/withdrawals", protect, adminProtect, async (req, res) => {
   try {
     // You can add admin check here if you have user.role
     const allRequests = await WithdrawalRequest.find()
@@ -77,7 +77,7 @@ router.get("/", protect, adminProtect, async (req, res) => {
  * @desc    Update withdrawal status (approve / reject)
  * @access  Private (Admin)
  */
-router.patch("/:id", protect, adminProtect, async (req, res) => {
+router.patch("/admin/withdrawals/:id", protect, adminProtect, async (req, res) => {
   try {
     const { status, note } = req.body;
 
