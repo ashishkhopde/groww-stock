@@ -121,7 +121,7 @@ router.post("/debit", protect, adminProtect, async (req, res) => {
 /**
  * ✅ Get Transaction History for Specific User
  */
-router.get("/history/:id", protect, adminProtect, async (req, res) => {
+router.get("/history/:id", protect, async (req, res) => {
   try {
     const userId = req.params.id;
     const history = await WalletTransaction.find({ userId })
