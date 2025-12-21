@@ -91,6 +91,10 @@ app.use("/api/stocks", stocksPublic);
 import profitRoutes from "./routes/profitRoutes.js";
 app.use("/api/profit", profitRoutes);
 
+import withdrawalRoutes from "./routes/withdrawalRoute.js";
+app.use("/api/withdrawals", withdrawalRoutes);
+
+
 // ------------------ ADMIN ROUTES ------------------
 import adminRoutes from "./routes/admin/admin.js";
 import adminUsers from "./routes/admin/users.js";

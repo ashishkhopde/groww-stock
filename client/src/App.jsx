@@ -31,6 +31,7 @@ import AdminLayout from "./layouts/AdminLayout";
 // Middleware
 import AdminRoute from "./middleware/AdminRoute";
 import PrivateRoute from "./components/PrivateRoute";
+import WithdrawalRequest from "./pages/WithdrawalRequest";
 
 export default function App() {
   return (
@@ -54,7 +55,7 @@ export default function App() {
         <Route path="/withdrawal" element={<PrivateRoute><WithdrawalList /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/deposit" element={<PrivateRoute><Deposit /></PrivateRoute>} />
-        <Route path="/withdrawal-request" element={<PrivateRoute><Deposit /></PrivateRoute>} />
+        <Route path="/withdrawal-request" element={<PrivateRoute><WithdrawalRequest /></PrivateRoute>} />
 
         {/* Admin Login (Public) */}
         <Route path="/admin/login" element={<AdminLogin />} />
