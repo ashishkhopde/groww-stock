@@ -126,12 +126,18 @@ export default function ModernDashboard() {
           </div>
 
           {/* ADD BALANCE */}
-          <div className="mb-6">
+          <div className="flex gap-4 mb-6">
             <button
               onClick={() => (window.location.href = "/add-money")}
               className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
             >
               Add Balance
+            </button>
+            <button
+              onClick={() => (window.location.href = "/add-money")}
+              className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            >
+             Withdrawal Requests
             </button>
           </div>
 
