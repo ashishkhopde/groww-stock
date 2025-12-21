@@ -54,6 +54,7 @@ export default function App() {
         <Route path="/withdrawal" element={<PrivateRoute><WithdrawalList /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/deposit" element={<PrivateRoute><Deposit /></PrivateRoute>} />
+        <Route path="/withdrawal-request" element={<PrivateRoute><Deposit /></PrivateRoute>} />
 
         {/* Admin Login (Public) */}
         <Route path="/admin/login" element={<AdminLogin />} />
