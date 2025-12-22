@@ -70,12 +70,9 @@ export default function AdminWithdrawalRequests() {
                 <th className="p-3 text-left">User</th>
                 <th className="p-3 text-left">Email</th>
                 <th className="p-3 text-left">Amount</th>
-                <th className="p-3 text-left">Method</th>
-                <th className="p-3 text-left">Account Details</th>
                 <th className="p-3 text-left">Status</th>
                 <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Note</th>
-                <th className="p-3 text-left">Action</th>
+                {/* <th className="p-3 text-left">Action</th> */}
               </tr>
             </thead>
             <tbody>
@@ -84,8 +81,8 @@ export default function AdminWithdrawalRequests() {
                   <td className="p-3">{req.userId?.name || "N/A"}</td>
                   <td className="p-3">{req.userId?.email || "N/A"}</td>
                   <td className="p-3 font-medium text-slate-800">₹{req.amount}</td>
-                  <td className="p-3 capitalize">{req.method}</td>
-                  <td className="p-3 text-slate-600">
+                  {/* <td className="p-3 capitalize">{req.method}</td> */}
+                  {/* <td className="p-3 text-slate-600">
                     {req.method === "bank" ? (
                       <div>
                         <p><strong>Holder:</strong> {req.accountDetails?.accountHolder || "-"}</p>
@@ -99,7 +96,7 @@ export default function AdminWithdrawalRequests() {
                     ) : (
                       "-"
                     )}
-                  </td>
+                  </td> */}
                   <td
                     className={`p-3 font-medium ${
                       req.status === "approved"
@@ -118,7 +115,7 @@ export default function AdminWithdrawalRequests() {
                       year: "numeric",
                     })}
                   </td>
-                  <td className="p-3">{req.note || "-"}</td>
+                  {/* <td className="p-3">{req.note || "-"}</td> */}
                   <td className="flex gap-2 p-3">
                     {req.status === "pending" && (
                       <>

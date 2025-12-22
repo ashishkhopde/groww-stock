@@ -1,6 +1,8 @@
 import express from "express";
 import { adminProtect, protect } from "../middleware/authMiddleware.js";
 import WithdrawalRequest from "../models/WithdrawalRequest.js";
+import User from "../models/User.js";
+
 
 const router = express.Router();
 
@@ -9,20 +11,20 @@ const router = express.Router();
  * @desc    Create a new withdrawal request
  * @access  Private (User)
  */
+// ✅ Create a new withdrawal request (only amount)
 router.post("/withdrawals/:id", protect, async (req, res) => {
   try {
-    const { amount, method, accountDetails, note } = req.body;
+    const { amount } = req.body; // fixed typo
 
-    if (!amount || !method) {
-      return res.status(400).json({ msg: "Amount and method are required." });
+    // Validation
+    if (!amount) {
+      return res.status(400).json({ msg: "Amount is required." });
     }
 
+    // Create new withdrawal
     const newRequest = await WithdrawalRequest.create({
       userId: req.params.id,
       amount,
-      method,
-      accountDetails,
-      note,
     });
 
     res.status(201).json({
@@ -35,23 +37,28 @@ router.post("/withdrawals/:id", protect, async (req, res) => {
   }
 });
 
-/**
- * @route   GET /withdrawals/my
- * @desc    Get all withdrawal requests for logged-in user
- * @access  Private (User)
- */
+// ✅ Get all withdrawals of a user
 router.get("/withdrawals/my/:id", protect, async (req, res) => {
   try {
-    const requests = await WithdrawalRequest.find({ userId : req.params.id })
+    // 1️⃣ Fetch user's withdrawals
+    const requests = await WithdrawalRequest.find({ userId: req.params.id })
+      .populate("userId", "wallet") // populate wallet only
       .sort({ createdAt: -1 })
-      .select("amount method status note createdAt");
+      .select("amount status createdAt userId");
 
-    res.json({ requests });
+    // 2️⃣ Get user balance
+    const user = await User.findById(req.params.id).select("wallet");
+
+    res.json({
+      balance: user?.wallet || 0,
+      requests,
+    });
   } catch (error) {
     console.error("Error fetching user withdrawals:", error);
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 
 /**
  * @route   GET /withdrawals
@@ -79,7 +86,7 @@ router.get("/admin/withdrawals", protect, adminProtect, async (req, res) => {
  */
 router.patch("/admin/withdrawals/:id", protect, adminProtect, async (req, res) => {
   try {
-    const { status, note } = req.body;
+    const { status } = req.body;
 
     if (!["approved", "rejected"].includes(status)) {
       return res.status(400).json({ msg: "Invalid status update." });
@@ -87,7 +94,7 @@ router.patch("/admin/withdrawals/:id", protect, adminProtect, async (req, res) =
 
     const updated = await WithdrawalRequest.findByIdAndUpdate(
       req.params.id,
-      { status, note },
+      { status },
       { new: true }
     );
 

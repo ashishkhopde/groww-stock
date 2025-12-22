@@ -17,27 +17,27 @@ const withdrawalRequestSchema = new mongoose.Schema(
     },
 
     // Payment method (like bank, UPI, Paytm, etc.)
-    method: {
-      type: String,
-      enum: ["bank", "upi"],
-      required: true,
-    },
+    // method: {
+    //   type: String,
+    //   enum: ["bank", "upi"],
+    //   required: true,
+    // },
 
-    // Details for chosen method
-    accountDetails: {
-      accountHolder: { type: String },
-      accountNumber: { type: String },
-      ifscCode: { type: String },
-      upiId: { type: String },
-    },
+    // // Details for chosen method
+    // accountDetails: {
+    //   accountHolder: { type: String },
+    //   accountNumber: { type: String },
+    //   ifscCode: { type: String },
+    //   upiId: { type: String },
+    // },
 
-    // Optional admin note or user remark
-    note: {
-      type: String,
-      default: "",
-    },
+    // // Optional admin note or user remark
+    // note: {
+    //   type: String,
+    //   default: "",
+    // },
 
-    // Request status
+    // // Request status
     status: {
       type: String,
       enum: ["pending", "approved", "rejected",],
