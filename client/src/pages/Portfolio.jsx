@@ -27,7 +27,7 @@ export default function Portfolio() {
         });
 
         const stocks = res.data.stocks || [];
-
+        // console.log(stocks);
         const mapped = stocks.map((s) => ({
           id: s._id,
           symbol: s.stockName?.toUpperCase(),
@@ -35,6 +35,7 @@ export default function Portfolio() {
           buy: Number(s.price),
           profit: Number(s.profit) || 0,
           loss: Number(s.loss) || 0,
+          createdAt : s.createdAt
         }));
 
         const investedAmt = mapped.reduce((sum, s) => sum + s.buy * s.qty, 0);
@@ -43,7 +44,12 @@ export default function Portfolio() {
 
         const currentAmt = investedAmt + profitAmt - lossAmt;
 
-        setHoldings(mapped);
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const recentStocks = mapped.filter(
+          (s) => s.createdAt && new Date(s.createdAt) >= twentyFourHoursAgo
+        );
+
+        setHoldings(recentStocks);
         setInvested(investedAmt);
         setTotalProfit(profitAmt);
         setTotalLoss(lossAmt);
@@ -74,7 +80,7 @@ export default function Portfolio() {
           {/* SUMMARY */}
           <div className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-4">
             <StatCard title="Total Value" value={`₹ ${current}`} />
-            <StatCard title="Invested" value={`₹ ${invested}`} />
+            {/* <StatCard title="Invested" value={`₹ ${invested}`} /> */}
             <StatCard title="Profit" value={`₹ ${totalProfit}`} profit={1} />
             <StatCard title="Loss" value={`₹ ${totalLoss}`} profit={-1} />
           </div>
