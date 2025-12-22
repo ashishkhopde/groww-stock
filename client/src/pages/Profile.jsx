@@ -132,9 +132,9 @@ export default function Profile() {
                 <h2 className="text-xl font-bold text-slate-900">{name}</h2>
                 <p className="mt-1 text-sm text-slate-500">{user.email}</p>
 
-                <button className="flex items-center gap-2 px-4 py-2 mt-4 text-sm transition-all duration-200 rounded-lg bg-slate-100 hover:bg-slate-200">
+                {/* <button className="flex items-center gap-2 px-4 py-2 mt-4 text-sm transition-all duration-200 rounded-lg bg-slate-100 hover:bg-slate-200">
                   <Edit3 size={16} /> Edit Profile Photo
-                </button>
+                </button> */}
               </div>
 
               {/* KYC SECTION */}
