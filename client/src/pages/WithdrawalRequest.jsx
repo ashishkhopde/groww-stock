@@ -39,10 +39,17 @@ export default function Withdrawals() {
   // ✅ Handle new withdrawal form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ✅ Check if amount is greater than available balance
+    if (parseFloat(amount) > balance) {
+      alert(`Insufficent amount`);
+      return; // Stop submission
+    }
+
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const payload = { amount };
+      const payload = { amount: parseFloat(amount) }; // ensure number type
 
       const res = await API.post(`/withdrawals/${user.id}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -83,14 +90,13 @@ export default function Withdrawals() {
           <div className="grid grid-cols-1 gap-6 mb-10 md:grid-cols-2">
             <div className="flex items-center justify-between p-5 bg-white border shadow-sm border-slate-200 rounded-2xl">
               <div>
-                <h3 className="text-sm text-slate-500">Avalibale Amount (Rs.)</h3>
+                <h3 className="text-sm text-slate-500">Available Amount (Rs.)</h3>
                 <p className="text-3xl font-bold text-emerald-600">
                   ₹{balance.toFixed(2)}
                 </p>
               </div>
               <div className="text-xl text-emerald-500">💰</div>
             </div>
-
           </div>
 
           {/* ✅ WITHDRAWAL FORM */}
