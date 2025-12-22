@@ -1,9 +1,8 @@
 import express from "express";
 import PaymentSettings from "../models/PaymentSettings.js";
 import { protect, adminProtect } from "../middleware/authMiddleware.js";
-import { upload } from "../middleware/multer.js"; // Multer to temporarily store file
-import { uploadOnCloudinary } from "../cloudnary.js"; // your Cloudinary helper
-import fs from "fs";
+import { upload } from "../middleware/multer.js"; // Multer temporary storage
+import { uploadOnCloudinary } from "../cloudnary.js"; // Cloudinary helper
 
 const router = express.Router();
 
@@ -21,29 +20,27 @@ router.get("/settings", protect, async (req, res) => {
 });
 
 /**
- * UPDATE payment settings (Admin only) with Cloudinary file upload
+ * UPDATE payment settings (Admin only) with optional Cloudinary file upload
  */
 router.put(
   "/settings",
   protect,
   adminProtect,
-  upload.single("logo"), // Multer saves temporarily to public/temp
+  upload.single("logo"), // Multer stores temporarily
   async (req, res) => {
     try {
-      const data = req.body;
+      const data = { ...req.body };
 
       if (req.file && req.file.path) {
-        // Upload file to Cloudinary
-        const cloudRes = await uploadOnCloudinary(req.file.path);
-        data.qrImage = cloudRes.secure_url; // Save Cloudinary URL
-
-        // Multer already created local file; your helper deletes it after upload
+        // Upload file to Cloudinary and get URL
+        const cloudUrl = await uploadOnCloudinary(req.file.path);
+        data.qrImage = cloudUrl; // Save Cloudinary URL
       }
 
       const settings = await PaymentSettings.findOneAndUpdate(
         {},
         data,
-        { new: true, upsert: true }
+        { new: true, upsert: true } // create if not exists
       );
 
       res.json({ msg: "Payment settings updated", settings });
