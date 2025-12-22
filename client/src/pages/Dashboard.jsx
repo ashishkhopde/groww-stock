@@ -69,7 +69,7 @@ export default function ModernDashboard() {
         <TickerStrip />
 
         {/* CONTENT */}
-        <div className="flex-grow w-full px-4 py-6 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex-grow w-full px-4 py-3 mx-auto sm:px-6 lg:px-8 max-w-5xl">
 
           {/* TITLE */}
           <div className="mb-6">
@@ -82,48 +82,50 @@ export default function ModernDashboard() {
           </div>
 
           {/* STATS CARDS */}
-          <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
-
+         <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
             <StatCard
               title="Total Balance"
               value={`₹ ${totalBalance.toLocaleString("en-IN")}`}
-              icon={<Wallet size={22} />}
-              color="indigo"
+              icon="💰"
+              color="navy"
             />
 
             <StatCard
               title="Total Deposit"
               value={`₹ ${totalDeposit.toLocaleString("en-IN")}`}
-              icon={<ArrowDownLeft size={22} />}
-              color="emerald"
+              icon="⬇️"
+              color="navy"
             />
 
             <StatCard
               title="Total Withdraw"
               value={`₹ ${totalWithdraw.toLocaleString("en-IN")}`}
-              icon={<ArrowUpRight size={22} />}
-              color="rose"
+              icon="⬆️"
+              color="navy"
             />
 
             <StatCard
               title="Total Transactions"
               value={transactions.length}
-              icon={<Users size={22} />}
-              color="purple"
+              icon="📊"
+              color="navy"
             />
+
             <StatCard
-              title="referral bonus"
+              title="Referral Bonus"
               value={user.referralBonus}
-              icon={<Users size={22} />}
-              color="purple"
+              icon="🎉"
+              color="navy"
             />
+
             <StatCard
-              title="bonus"
+              title="Bonus"
               value={user.bonus}
-              icon={<Users size={22} />}
-              color="purple"
+              icon="🎁"
+              color="navy"
             />
           </div>
+
 
           {/* ADD BALANCE */}
           <div className="flex gap-4 mb-6">
@@ -204,28 +206,38 @@ export default function ModernDashboard() {
 
 /* ================= STAT CARD COMPONENT ================= */
 function StatCard({ title, value, icon, color }) {
-  const bgMap = {
-    indigo: "bg-indigo-50 text-indigo-600",
-    emerald: "bg-emerald-50 text-emerald-600",
-    rose: "bg-rose-50 text-rose-600",
-    purple: "bg-purple-50 text-purple-600",
+  const iconBgMap = {
+    navy: "bg-gradient-to-br from-[#0F172A] to-[#1E293B]",
+    emerald: "bg-gradient-to-br from-emerald-500 to-emerald-600",
+    rose: "bg-gradient-to-br from-rose-500 to-rose-600",
+    purple: "bg-gradient-to-br from-purple-500 to-purple-600",
   };
 
   return (
     <div className="p-5 bg-white border shadow-sm sm:p-6 rounded-2xl border-slate-100">
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between">
+        
+        {/* LEFT CONTENT */}
         <div>
-          <p className="mb-1 text-xs font-medium sm:text-sm text-slate-500">
+          <p className="mb-1 text-xs font-medium text-slate-500">
             {title}
           </p>
-          <h3 className="text-xl font-bold sm:text-2xl text-slate-800">
+          <h3 className="text-xl font-bold text-slate-800">
             {value}
           </h3>
         </div>
-        <div className={`p-3 rounded-xl ${bgMap[color]}`}>
-          {icon}
+
+        {/* ICON */}
+        <div
+          className={`w-11 h-11 rounded-full flex items-center justify-center text-white shadow-md ${
+            iconBgMap[color]
+          }`}
+        >
+          <span className="text-lg">{icon}</span>
         </div>
+
       </div>
     </div>
   );
 }
+

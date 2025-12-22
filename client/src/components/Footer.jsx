@@ -5,6 +5,8 @@ import {
   Home,
   Mail
 } from "lucide-react";
+import logo from '../assets/charts/logo.png';
+
 
 export default function Footer() {
   return (
@@ -15,9 +17,8 @@ export default function Footer() {
 
         {/* BRAND SECTION */}
         <div>
-          <h2 className="text-white text-xl font-semibold mb-4">
-            Grow Stock Capital
-          </h2>
+          <img src={logo} alt="Grow Stock Capital Logo" className="h-20 mb-4" />
+          
 
           <div className="flex gap-4 mt-4">
             <a href="#" className="hover:text-white transition">
@@ -66,19 +67,6 @@ export default function Footer() {
           <div className="space-y-4 text-sm">
 
             <div className="flex gap-3">
-              <Home size={16} className="mt-1 text-white" />
-              <p>
-                <span className="font-semibold text-white block">
-                  Head Office
-                </span>
-                City Centre, 2nd Floor,<br />
-                Krishna Business Centre,<br />
-                Tulsi Vihar Colony, Gwalior,<br />
-                Madhya Pradesh 474002
-              </p>
-            </div>
-
-            <div className="flex gap-3">
               <Mail size={16} className="mt-1 text-white" />
               <p>
                 <span className="font-semibold text-white block">
@@ -88,7 +76,7 @@ export default function Footer() {
                   href="mailto:info@growstockcapital.com"
                   className="text-blue-400 hover:underline"
                 >
-                  info@growstockcapital.com
+                angelsmartalgo@gmail.com
                 </a>
               </p>
             </div>
@@ -100,7 +88,7 @@ export default function Footer() {
       {/* BOTTOM BAR */}
       <div className="border-t border-slate-700">
         <div className="max-w-7xl mx-auto px-6 py-4 text-sm text-slate-400">
-          © Copyright 2018 Grow Stock Capital All Rights Reserved.
+          © Copyright angelsmartalgo All Rights Reserved.
         </div>
       </div>
     </footer>

@@ -307,7 +307,7 @@ const Footer = () => (
     </div>
 
     <div className="max-w-7xl mx-auto px-6 text-center text-slate-500 text-xs mt-6">
-      © {new Date().getFullYear()} Groww Capital – All Rights Reserved. Stock trading involves risk.
+      © {new Date().getFullYear()} angelsmartalgo -  All Rights Reserved. Stock trading involves risk.
     </div>
   </footer>
 );
