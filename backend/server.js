@@ -92,7 +92,7 @@ import profitRoutes from "./routes/profitRoutes.js";
 app.use("/api/profit", profitRoutes);
 
 import withdrawalRoutes from "./routes/withdrawalRoute.js";
-app.use("/api/withdrawals", withdrawalRoutes);
+app.use("/api", withdrawalRoutes);
 
 
 // ------------------ ADMIN ROUTES ------------------

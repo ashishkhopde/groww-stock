@@ -5,7 +5,7 @@ export default function AdminLayout() {
     <div className="flex min-h-screen bg-slate-100">
 
       {/* LEFT SIDEBAR — KEEP ONLY ONE */}
-      <aside className="w-64 bg-slate-900 text-white p-6 space-y-6">
+      <aside className="w-64 p-6 space-y-6 text-white bg-slate-900">
 
         <h2 className="text-lg font-bold">Admin</h2>
 
@@ -13,6 +13,7 @@ export default function AdminLayout() {
           <a href="/admin" className="block hover:text-emerald-400">Dashboard</a>
           <a href="/admin/users" className="block hover:text-emerald-400">Users</a>
           <a href="/admin/kyc" className="block hover:text-emerald-400">KYC Requests</a>
+          <a href="/admin/withdrawal" className="block hover:text-emerald-400">Withdrawal Requests</a>
           <a href="/admin/stocks" className="block hover:text-emerald-400">Stocks</a>
           <a href="/admin/wallet" className="block hover:text-emerald-400">Wallet / Deposits</a>
         </nav>
