@@ -18,7 +18,7 @@ export default function Footer() {
         {/* BRAND SECTION */}
         <div>
           <img src={logo} alt="Grow Stock Capital Logo" className="h-20 mb-4" />
-          
+
 
           <div className="flex gap-4 mt-4">
             <a href="#" className="hover:text-white transition">
@@ -67,6 +67,22 @@ export default function Footer() {
           <div className="space-y-4 text-sm">
 
             <div className="flex gap-3">
+              <Home size={40} className="text-white" />
+              <p>
+                <span className="font-semibold text-white block">
+                  Address
+                </span>
+                <a
+                  href="https://maps.app.goo.gl/i1MxK9gzQobns6NY7"
+                  className="text-blue-400 hover:underline"
+                >
+                  Head Office
+                  City Centre, 2nd Floor, Krishna Business Centre, Tulsi Vihar Colony, Gwalior, Madhya Pradesh 474002
+                </a>
+              </p>
+            </div>
+
+            <div className="flex gap-3">
               <Mail size={16} className="mt-1 text-white" />
               <p>
                 <span className="font-semibold text-white block">
@@ -76,7 +92,7 @@ export default function Footer() {
                   href="mailto:info@growstockcapital.com"
                   className="text-blue-400 hover:underline"
                 >
-                angelsmartalgo@gmail.com
+                  angelsmartalgo@gmail.com
                 </a>
               </p>
             </div>

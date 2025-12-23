@@ -73,11 +73,11 @@ export default function Portfolio() {
           <h1 className="mb-2 text-3xl font-bold text-slate-800 mb-5">
             My Stocks
           </h1>
-          <p className="mb-8 text-slate-500">
+          {/* <p className="mb-8 text-slate-500">
             Contact Details :
             Head Office
             City Centre, 2nd Floor, Krishna Business Centre, Tulsi Vihar Colony, Gwalior, Madhya Pradesh 474002
-          </p>
+          </p> */}
 
           {/* SUMMARY */}
           {/* <div className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-4">
