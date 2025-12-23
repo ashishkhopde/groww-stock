@@ -17,6 +17,7 @@ export default function ModernDashboard() {
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalProfit, setTotalProfit] = useState(0);
 
   const userId = localStorage.getItem("userId");
 
@@ -42,6 +43,50 @@ export default function ModernDashboard() {
         setLoading(false);
       }
     }
+
+    const load = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "/login";
+          return;
+        }
+
+        const res = await API.get("/stocks/my", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const stocks = res.data.stocks || [];
+        // console.log(stocks);
+        const mapped = stocks.map((s) => ({
+          id: s._id,
+          symbol: s.stockName?.toUpperCase(),
+          qty: s.quantity,
+          buy: Number(s.price),
+          profit: Number(s.profit) || 0,
+          loss: Number(s.loss) || 0,
+          createdAt : s.createdAt
+        }));
+
+        // const investedAmt = mapped.reduce((sum, s) => sum + s.buy * s.qty, 0);
+        const profitAmt = mapped.reduce((sum, s) => sum + s.profit, 0);
+        // const lossAmt = mapped.reduce((sum, s) => sum + s.loss, 0);
+
+        // const currentAmt = investedAmt + profitAmt - lossAmt;
+
+        // const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        // const recentStocks = mapped.filter(
+        //   (s) => s.createdAt && new Date(s.createdAt) >= twentyFourHoursAgo
+        // );
+
+        setTotalProfit(profitAmt);
+      } catch (error) {
+        console.error("Error loading portfolio:", error);
+      }
+    };
+
+    load();
+
     loadData();
   }, [userId]);
 
@@ -105,8 +150,8 @@ export default function ModernDashboard() {
             />
 
             <StatCard
-              title="Total Transactions"
-              value={transactions.length}
+              title="Total Profit"
+              value={totalProfit}
               icon="📊"
               color="navy"
             />

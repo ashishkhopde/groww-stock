@@ -35,7 +35,7 @@ export default function Portfolio() {
           buy: Number(s.price),
           profit: Number(s.profit) || 0,
           loss: Number(s.loss) || 0,
-          createdAt : s.createdAt
+          createdAt: s.createdAt
         }));
 
         const investedAmt = mapped.reduce((sum, s) => sum + s.buy * s.qty, 0);
@@ -70,25 +70,27 @@ export default function Portfolio() {
 
         <div className="flex-grow w-full max-w-6xl p-6 mx-auto lg:p-10">
 
-          <h1 className="mb-2 text-3xl font-bold text-slate-800">
-            My Portfolio
+          <h1 className="mb-2 text-3xl font-bold text-slate-800 mb-5">
+            My Stocks
           </h1>
           <p className="mb-8 text-slate-500">
-            Track your investments and performance.
+            Contact Details :
+            Head Office
+            City Centre, 2nd Floor, Krishna Business Centre, Tulsi Vihar Colony, Gwalior, Madhya Pradesh 474002
           </p>
 
           {/* SUMMARY */}
-          <div className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-4">
+          {/* <div className="grid grid-cols-1 gap-4 mb-10 sm:grid-cols-4">
             <StatCard title="Total Value" value={`₹ ${current}`} />
-            {/* <StatCard title="Invested" value={`₹ ${invested}`} /> */}
+            <StatCard title="Invested" value={`₹ ${invested}`} />
             <StatCard title="Profit" value={`₹ ${totalProfit}`} profit={1} />
             <StatCard title="Loss" value={`₹ ${totalLoss}`} profit={-1} />
-          </div>
+          </div> */}
 
           {/* MY STOCKS */}
-          <h2 className="mb-6 text-xl font-semibold text-slate-800">
+          {/* <h2 className="mb-6 text-xl font-semibold text-slate-800">
             My Stocks
-          </h2>
+          </h2> */}
 
           {holdings.length === 0 ? (
             <div className="py-10 text-center border border-dashed text-slate-500 border-slate-300 rounded-xl">
@@ -128,11 +130,10 @@ export default function Portfolio() {
                     {/* PROFIT / LOSS */}
                     <div className="flex justify-end mt-5">
                       <span
-                        className={`text-sm font-bold ${
-                          totalPL >= 0
+                        className={`text-sm font-bold ${totalPL >= 0
                             ? "text-emerald-600"
                             : "text-rose-600"
-                        }`}
+                          }`}
                       >
                         {totalPL >= 0
                           ? `+₹${totalPL}`
@@ -160,13 +161,12 @@ function StatCard({ title, value, profit }) {
         {title}
       </p>
       <h2
-        className={`text-3xl font-semibold mt-2 ${
-          profit > 0
+        className={`text-3xl font-semibold mt-2 ${profit > 0
             ? "text-emerald-600"
             : profit < 0
-            ? "text-rose-600"
-            : "text-slate-800"
-        }`}
+              ? "text-rose-600"
+              : "text-slate-800"
+          }`}
       >
         {value}
       </h2>
