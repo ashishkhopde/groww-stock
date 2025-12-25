@@ -38,7 +38,7 @@ export default function ManageUsers() {
         alert("Failed to load users");
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [users]);
 
   // Block / Unblock User
   const toggleBlock = async (id) => {
@@ -50,7 +50,7 @@ export default function ManageUsers() {
 
     setUsers(
       users.map((u) =>
-        u._id === id ? { ...u, blocked: !u.blocked } : u
+        u._id === id ? { ...u, isBlocked: !u.blocked } : u
       )
     );
   };
@@ -142,7 +142,7 @@ export default function ManageUsers() {
 
                 {/* Blocked Status */}
                 <td className="p-4">
-                  {u.blocked ? (
+                  {u.isBlocked ? (
                     <span className="flex items-center gap-1 font-semibold text-rose-600">
                       <Ban size={16} /> Blocked
                     </span>
@@ -184,11 +184,11 @@ export default function ManageUsers() {
 
                   {/* Block/Unblock */}
                   <button
-                    onClick={() => toggleBlock(u._id)}
-                    className={`px-3 py-1 text-xs rounded-lg ${u.blocked ? "bg-emerald-600" : "bg-rose-600"
+                    onClick={() => {toggleBlock(u._id)}}
+                    className={`px-3 py-1 text-xs rounded-lg ${u.isBlocked ? "bg-emerald-600" : "bg-rose-600"
                       } text-white`}
                   >
-                    {u.blocked ? "Unblock" : "Block"}
+                    {u.isBlocked ? "Unblock" : "Block"}
                   </button>
 
                     <button className="px-3 py-1 text-xs text-white bg-indigo-600 rounded-lg" onClick={()=>handleUser(u._id)}>
