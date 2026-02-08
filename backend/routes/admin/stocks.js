@@ -7,7 +7,7 @@ const router = express.Router();
 /* ===================== ADD STOCK ===================== */
 router.post("/add", protect, adminProtect, async (req, res) => {
   try {
-    const { userId, stockName, price, quantity, profit = 0, loss = 0 } = req.body;
+    const { userId, stockName, price, quantity, profit = 0, loss = 0, ltp = 0 } = req.body;
 
     if (!userId || !stockName || !price || !quantity)
       return res.status(400).json({ msg: "Missing fields" });
@@ -19,6 +19,7 @@ router.post("/add", protect, adminProtect, async (req, res) => {
       quantity,
       profit,
       loss,
+      ltp
     });
 
     res.json({ msg: "Stock added successfully", stock });
@@ -31,7 +32,7 @@ router.post("/add", protect, adminProtect, async (req, res) => {
 /* ===================== UPDATE STOCK ===================== */
 router.put("/:id", protect, adminProtect, async (req, res) => {
   try {
-    const { stockName, price, quantity, profit, loss } = req.body;
+    const { stockName, price, quantity, profit, loss, ltp } = req.body;
 
     const stock = await Stock.findById(req.params.id);
     if (!stock) return res.status(404).json({ msg: "Stock not found" });
@@ -41,6 +42,7 @@ router.put("/:id", protect, adminProtect, async (req, res) => {
     stock.quantity = quantity !== undefined ? Number(quantity) : stock.quantity;
     stock.profit = profit !== undefined ? Number(profit) : stock.profit;
     stock.loss = loss !== undefined ? Number(loss) : stock.loss;
+    stock.ltp = ltp !== undefined ? Number(ltp) : stock.ltp;
 
     const updated = await stock.save();
     res.json({ msg: "Stock updated successfully", updated });

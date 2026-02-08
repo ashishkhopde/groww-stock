@@ -202,6 +202,7 @@ export default function StockManagement() {
     quantity: "",
     profit: "",
     loss: "",
+    ltp: ""
   });
 
   // ------------------- Fetch Stocks & Users -------------------
@@ -224,12 +225,13 @@ export default function StockManagement() {
       setUsers(usersRes.data);
       setStocks(stocksRes.data);
 
-      // ✅ Sync Profit/Loss into Edit State
+      // ✅ Sync Profit/Loss/LTP into Edit State
       const temp = {};
       stocksRes.data.forEach((s) => {
         temp[s._id] = {
           profit: s.profit,
           loss: s.loss,
+          ltp: s.ltp,
         };
       });
       setEditValues(temp);
@@ -270,6 +272,7 @@ export default function StockManagement() {
         quantity: "",
         profit: "",
         loss: "",
+        ltp: "",
       });
 
       fetchData();
@@ -295,7 +298,7 @@ export default function StockManagement() {
     }
   };
 
-  // ------------------- Submit Profit/Loss Update -------------------
+  // ------------------- Submit Profit/Loss/LTP Update -------------------
   const handleSubmitProfitLoss = async (id) => {
     try {
       await API.put(
@@ -303,6 +306,7 @@ export default function StockManagement() {
         {
           profit: editValues[id]?.profit,
           loss: editValues[id]?.loss,
+          ltp: editValues[id]?.ltp,
         },
         {
           headers: {
@@ -311,10 +315,10 @@ export default function StockManagement() {
         }
       );
 
-      alert("Profit/Loss Updated Successfully ✅");
+      alert("Stock Details Updated Successfully ✅");
       fetchData();
     } catch (error) {
-      console.error("Error updating profit/loss:", error);
+      console.error("Error updating stock details:", error);
     }
   };
 
@@ -401,6 +405,7 @@ export default function StockManagement() {
               <th className="p-4 text-left">Stock</th>
               <th className="p-4 text-left">Quantity</th>
               <th className="p-4 text-left">Price</th>
+              <th className="p-4 text-left">LTP</th>
               <th className="p-4 text-left">Profit</th>
               <th className="p-4 text-left">Loss</th>
               <th className="p-4 text-right">Actions</th>
@@ -416,6 +421,24 @@ export default function StockManagement() {
                 </td>
                 <td className="p-4">{s.quantity}</td>
                 <td className="p-4">{s.price}</td>
+
+                {/* ✅ LTP Input */}
+                <td className="p-4">
+                  <input
+                    type="number"
+                    value={editValues[s._id]?.ltp || ""}
+                    onChange={(e) =>
+                      setEditValues({
+                        ...editValues,
+                        [s._id]: {
+                          ...editValues[s._id],
+                          ltp: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-24 p-2 text-blue-600 border rounded-lg bg-blue-50"
+                  />
+                </td>
 
                 {/* ✅ Profit Input */}
                 <td className="p-4">
@@ -454,11 +477,11 @@ export default function StockManagement() {
                 </td>
 
                 {/* ✅ Actions */}
-                <td className="p-4 text-right flex gap-2 justify-end">
+                <td className="flex justify-end gap-2 p-4 text-right">
                   {/* Submit Button */}
                   <button
                     onClick={() => handleSubmitProfitLoss(s._id)}
-                    className="px-4 py-2 text-white rounded-lg bg-blue-600 hover:bg-blue-700"
+                    className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                   >
                     Submit
                   </button>

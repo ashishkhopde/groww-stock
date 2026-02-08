@@ -35,6 +35,7 @@ export default function Portfolio() {
           buy: Number(s.price),
           profit: Number(s.profit) || 0,
           loss: Number(s.loss) || 0,
+          ltp: Number(s.ltp) || 0,
           createdAt: s.createdAt
         }));
 
@@ -70,7 +71,7 @@ export default function Portfolio() {
 
         <div className="flex-grow w-full max-w-6xl p-6 mx-auto lg:p-10">
 
-          <h1 className="mb-2 text-3xl font-bold text-slate-800 mb-5">
+          <h1 className="mb-2 mb-5 text-3xl font-bold text-slate-800">
             My Stocks
           </h1>
           {/* <p className="mb-8 text-slate-500">
@@ -123,7 +124,7 @@ export default function Portfolio() {
                         {stock.qty} Qty | Buy {stock.buy}
                       </span>
                       <span>
-                        LTP 3.24 % | Sell {stock.buy + 20}
+                        {stock.ltp} | Sell {stock.buy + 20}
                       </span>
                     </div>
 

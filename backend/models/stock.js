@@ -34,6 +34,11 @@ const stockSchema = new mongoose.Schema(
       type: Number,
       default: 0, // Optional — you can also just use profit < 0
     },
+
+    ltp : {
+      type : Number,
+      default : 0
+    }
   },
   { timestamps: true }
 );
