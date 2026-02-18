@@ -62,7 +62,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
 dotenv.config();
-// console.log("SERVER TEST:", process.env.MAIL_USER, process.env.MAIL_PASS);
+// console.log("EMAIL_USER =", process.env.EMAIL_USER);
+// console.log("EMAIL_PASS =", process.env.EMAIL_PASS ? "Loaded ✅" : "Missing ❌");
 
 const app = express();
 

@@ -192,7 +192,7 @@ export default function StockManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Profit/Loss Editable Local State
+  // ✅ Editable Local State
   const [editValues, setEditValues] = useState({});
 
   const [newStock, setNewStock] = useState({
@@ -202,7 +202,7 @@ export default function StockManagement() {
     quantity: "",
     profit: "",
     loss: "",
-    ltp: ""
+    sale: "",
   });
 
   // ------------------- Fetch Stocks & Users -------------------
@@ -225,15 +225,18 @@ export default function StockManagement() {
       setUsers(usersRes.data);
       setStocks(stocksRes.data);
 
-      // ✅ Sync Profit/Loss/LTP into Edit State
+      // ✅ Sync Profit/Loss/Sale into Edit State
       const temp = {};
       stocksRes.data.forEach((s) => {
         temp[s._id] = {
           profit: s.profit,
           loss: s.loss,
-          ltp: s.ltp,
+
+          // ✅ Input me value बनी रहेगी
+          saleIncrement: editValues[s._id]?.saleIncrement || "",
         };
       });
+
       setEditValues(temp);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -272,7 +275,7 @@ export default function StockManagement() {
         quantity: "",
         profit: "",
         loss: "",
-        ltp: "",
+        sale: "",
       });
 
       fetchData();
@@ -298,7 +301,7 @@ export default function StockManagement() {
     }
   };
 
-  // ------------------- Submit Profit/Loss/LTP Update -------------------
+  // ------------------- Submit Profit/Loss/Sale Increment -------------------
   const handleSubmitProfitLoss = async (id) => {
     try {
       await API.put(
@@ -306,7 +309,9 @@ export default function StockManagement() {
         {
           profit: editValues[id]?.profit,
           loss: editValues[id]?.loss,
-          ltp: editValues[id]?.ltp,
+
+          // ✅ Only Increment Points
+          sale: Number(editValues[id]?.saleIncrement || 0),
         },
         {
           headers: {
@@ -315,7 +320,11 @@ export default function StockManagement() {
         }
       );
 
-      alert("Stock Details Updated Successfully ✅");
+      alert("Stock Updated Successfully ✅");
+
+      // ❌ अब reset नहीं होगा
+      // saleIncrement value input me बनी रहेगी
+
       fetchData();
     } catch (error) {
       console.error("Error updating stock details:", error);
@@ -403,9 +412,9 @@ export default function StockManagement() {
             <tr>
               <th className="p-4 text-left">User</th>
               <th className="p-4 text-left">Stock</th>
-              <th className="p-4 text-left">Quantity</th>
-              <th className="p-4 text-left">Price</th>
-              <th className="p-4 text-left">LTP</th>
+              <th className="p-4 text-left">Qty</th>
+              <th className="p-4 text-left">Buy</th>
+              <th className="p-4 text-left">Increase Sell Points</th>
               <th className="p-4 text-left">Profit</th>
               <th className="p-4 text-left">Loss</th>
               <th className="p-4 text-right">Actions</th>
@@ -416,31 +425,30 @@ export default function StockManagement() {
             {stocks.map((s) => (
               <tr key={s._id} className="border-t hover:bg-slate-50">
                 <td className="p-4">{s.user?.name}</td>
-                <td className="p-4 font-semibold text-slate-800">
-                  {s.stockName}
-                </td>
+                <td className="p-4 font-semibold">{s.stockName}</td>
                 <td className="p-4">{s.quantity}</td>
                 <td className="p-4">{s.price}</td>
 
-                {/* ✅ LTP Input */}
+                {/* ✅ Sale Increment Input */}
                 <td className="p-4">
                   <input
                     type="number"
-                    value={editValues[s._id]?.ltp || ""}
+                    value={editValues[s._id]?.saleIncrement || ""}
                     onChange={(e) =>
                       setEditValues({
                         ...editValues,
                         [s._id]: {
                           ...editValues[s._id],
-                          ltp: e.target.value,
+                          saleIncrement: e.target.value,
                         },
                       })
                     }
-                    className="w-24 p-2 text-blue-600 border rounded-lg bg-blue-50"
+                    placeholder="+ Points"
+                    className="w-24 p-2 text-purple-600 border rounded-lg bg-purple-50"
                   />
                 </td>
 
-                {/* ✅ Profit Input */}
+                {/* Profit */}
                 <td className="p-4">
                   <input
                     type="number"
@@ -458,7 +466,7 @@ export default function StockManagement() {
                   />
                 </td>
 
-                {/* ✅ Loss Input */}
+                {/* Loss */}
                 <td className="p-4">
                   <input
                     type="number"
@@ -476,9 +484,8 @@ export default function StockManagement() {
                   />
                 </td>
 
-                {/* ✅ Actions */}
-                <td className="flex justify-end gap-2 p-4 text-right">
-                  {/* Submit Button */}
+                {/* Actions */}
+                <td className="flex justify-end gap-2 p-4">
                   <button
                     onClick={() => handleSubmitProfitLoss(s._id)}
                     className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
@@ -486,7 +493,6 @@ export default function StockManagement() {
                     Submit
                   </button>
 
-                  {/* Delete Button */}
                   <button
                     onClick={() => handleDeleteStock(s._id)}
                     className="flex items-center gap-1 px-3 py-2 text-white rounded-lg bg-rose-600 hover:bg-rose-700"

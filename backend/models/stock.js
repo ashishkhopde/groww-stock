@@ -35,7 +35,7 @@ const stockSchema = new mongoose.Schema(
       default: 0, // Optional — you can also just use profit < 0
     },
 
-    ltp : {
+    sale : {
       type : Number,
       default : 0
     }

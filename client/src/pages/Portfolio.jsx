@@ -35,7 +35,7 @@ export default function Portfolio() {
           buy: Number(s.price),
           profit: Number(s.profit) || 0,
           loss: Number(s.loss) || 0,
-          ltp: Number(s.ltp) || 0,
+          sale: Number(s.sale) || 0,
           createdAt: s.createdAt
         }));
 
@@ -124,7 +124,7 @@ export default function Portfolio() {
                         {stock.qty} Qty | Buy {stock.buy}
                       </span>
                       <span>
-                        LTP {stock.ltp} | Sell {stock.buy + 20}
+                        LTP 3.24 % |  Sell {stock.buy + 20 + stock.sale} 
                       </span>
                     </div>
 

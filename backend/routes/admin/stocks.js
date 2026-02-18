@@ -7,7 +7,15 @@ const router = express.Router();
 /* ===================== ADD STOCK ===================== */
 router.post("/add", protect, adminProtect, async (req, res) => {
   try {
-    const { userId, stockName, price, quantity, profit = 0, loss = 0, ltp = 0 } = req.body;
+    const {
+      userId,
+      stockName,
+      price,
+      quantity,
+      profit = 0,
+      loss = 0,
+      sale = 0, // ✅ sale points default
+    } = req.body;
 
     if (!userId || !stockName || !price || !quantity)
       return res.status(400).json({ msg: "Missing fields" });
@@ -19,7 +27,7 @@ router.post("/add", protect, adminProtect, async (req, res) => {
       quantity,
       profit,
       loss,
-      ltp
+      sale, // ✅ store sale points
     });
 
     res.json({ msg: "Stock added successfully", stock });
@@ -32,20 +40,29 @@ router.post("/add", protect, adminProtect, async (req, res) => {
 /* ===================== UPDATE STOCK ===================== */
 router.put("/:id", protect, adminProtect, async (req, res) => {
   try {
-    const { stockName, price, quantity, profit, loss, ltp } = req.body;
+    const { stockName, price, quantity, profit, loss, sale } = req.body;
 
     const stock = await Stock.findById(req.params.id);
     if (!stock) return res.status(404).json({ msg: "Stock not found" });
 
+    // Normal updates
     stock.stockName = stockName || stock.stockName;
     stock.price = price !== undefined ? Number(price) : stock.price;
     stock.quantity = quantity !== undefined ? Number(quantity) : stock.quantity;
     stock.profit = profit !== undefined ? Number(profit) : stock.profit;
     stock.loss = loss !== undefined ? Number(loss) : stock.loss;
-    stock.ltp = ltp !== undefined ? Number(ltp) : stock.ltp;
+
+    // ✅ IMPORTANT: Increment Sale Points
+    if (sale !== undefined) {
+      stock.sale = stock.sale + Number(sale);
+    }
 
     const updated = await stock.save();
-    res.json({ msg: "Stock updated successfully", updated });
+
+    res.json({
+      msg: "Stock updated successfully ✅",
+      updated,
+    });
   } catch (error) {
     console.error("UPDATE STOCK ERROR:", error);
     res.status(500).json({ msg: "Server error while updating stock" });
