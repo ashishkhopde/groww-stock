@@ -60,6 +60,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import { seedPlans } from "./utils/seedPlans.js";
 
 dotenv.config();
 // console.log("EMAIL_USER =", process.env.EMAIL_USER);
@@ -72,8 +73,7 @@ app.use(cors());
 app.use(express.json());
 
 // ------------------ DB ------------------
-connectDB();
-
+connectDB().then(seedPlans);
 // ------------------ ROUTES ------------------
 
 // User Auth
@@ -103,6 +103,8 @@ import adminKyc from "./routes/admin/kyc.js";
 import adminStocks from "./routes/admin/stocks.js";
 import adminWallet from "./routes/admin/wallet.js";
 import adminProfitRoutes from "./routes/admin/profit.js";
+import adminFooter from "./routes/admin/footer.js";
+import adminPlans from "./routes/admin/plans.js";
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/users", adminUsers);
@@ -110,6 +112,8 @@ app.use("/api/admin/kyc", adminKyc);
 app.use("/api/admin/stocks", adminStocks);
 app.use("/api/admin/wallet", adminWallet);
 app.use("/api/admin", adminProfitRoutes);
+app.use("/api/admin", adminFooter);
+app.use("/api/admin", adminPlans);
 
 // ------------------ PAYMENT (NEW – NO RAZORPAY) ------------------
 import paymentRoutes from "./routes/payment.js";

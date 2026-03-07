@@ -111,6 +111,8 @@ router.post("/verify-email-otp", async (req, res) => {
     );
 
     // console.log(user);
+    console.log("Entered password:", password);
+console.log("DB password:", user.password);
 
     res.json({
       msg: "Email verified! Registration complete 🎉",
@@ -141,9 +143,20 @@ router.post("/login", async (req, res) => {
     if (!user)
       return res.status(400).json({ msg: "Invalid credentials" });
 
-    const match = password === user.password;
-    if (!match)
-      return res.status(400).json({ msg: "Incorrect password" });
+ let match = false;
+
+  // hashed password check
+  if (user.password.startsWith("$2")) {
+    match = await bcrypt.compare(password, user.password);
+  } 
+  // plain text password check
+  else {
+    match = password === user.password;
+  }
+
+  if (!match)
+    return res.status(400).json({ msg: "Incorrect password" });
+
 
     const token = jwt.sign(
       { id: user._id },

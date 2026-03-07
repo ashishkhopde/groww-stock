@@ -5,7 +5,8 @@ import {
   PlusCircle,
   Landmark,
   CreditCard,
-  LogOut
+  LogOut,
+  Settings
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -56,6 +57,19 @@ export default function AdminDashboard() {
             title="Manage Payments"
             icon={<CreditCard size={28} />}
             link="/admin/payment-settings"
+          />
+
+          {/* Footer Settings */}
+          <AdminCard
+          title="Footer Settings"
+          icon={<Settings size={28} />}
+          link="/admin/footer-settings"
+          />
+
+          <AdminCard
+          title="Plan Management"
+          icon={<CreditCard size={28} />}
+          link="/admin/plans"
           />
 
           {/* 🔴 Logout */}

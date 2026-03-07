@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { 
+import React, { useState, useEffect } from 'react';import { 
   BarChart4, 
   Menu, 
   X, 
@@ -10,6 +9,8 @@ import {
   Phone 
 } from 'lucide-react';
 import { Link } from "react-router-dom";
+import API from "../api/axios";
+
 import Trading from '../assets/charts/Trading_chart.png';
 import logo from '../assets/charts/logo.png';
 
@@ -210,52 +211,83 @@ const PackageCard = ({ badge, title, price, features, isFeatured, color }) => (
 );
 
 const Packages = () => {
-  const packagesData = [
-    {
-      badge: "Standard",
-      title: "₹ 25,000 Investment",
-      price: "20% ROI",
-      features: ["Index Options Focus", "20% Max Return Guarantee", "Monthly Withdrawal Access", "Dedicated Basic Support"],
-      isFeatured: false,
-      color: "green"
-    },
-    {
-      badge: "Special User",
-      title: "₹ 50,000 Investment",
-      price: "30% ROI",
-      features: ["Index & Futures Trading", "30% Max Return Guarantee", "Daily Withdrawal Access", "Priority Dedicated Support"],
-      isFeatured: true,
-      color: "emerald"
-    },
-    {
-      badge: "Premium",
-      title: "₹ 1,00,000 Investment",
-      price: "40% ROI",
-      features: ["Stock, Index, & Commodity", "40% Max Return Guarantee", "Lifetime Validity & Daily Withdrawal", "24/7 Expert Analyst Support"],
-      isFeatured: false,
-      color: "purple"
-    },
-  ];
+
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    const fetchPlans = async () => {
+
+      try {
+
+        const res = await API.get("/admin/plans");
+
+        setPlans(res.data);
+
+      } catch (error) {
+
+        console.log("Plan fetch error", error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+    fetchPlans();
+
+  }, []);
 
   return (
     <section id="packages" className="py-20 bg-white">
+
       <div className="max-w-7xl mx-auto px-6">
+
         <div className="text-center mb-16">
+
           <span className="text-emerald-600 uppercase font-bold text-sm tracking-widest mb-2 block">
             Pricing
           </span>
+
           <h2 className="text-4xl font-extrabold text-slate-900">
             Choose Your <span className="text-emerald-600">Investment Package</span>
           </h2>
-          <p className="text-lg text-slate-600 mt-4">Transparent plans designed for every stage of your financial growth.</p>
+
+          <p className="text-lg text-slate-600 mt-4">
+            Transparent plans designed for every stage of your financial growth.
+          </p>
+
         </div>
 
+        {loading && (
+          <p className="text-center text-slate-500">
+            Loading plans...
+          </p>
+        )}
+
         <div className="grid md:grid-cols-3 gap-10">
-          {packagesData.map((pkg, index) => (
-            <PackageCard key={index} {...pkg} />
+
+          {plans.map((plan, index) => (
+
+            <PackageCard
+              key={plan._id}
+              badge={plan.name}
+              title={plan.price}
+              price={plan.roi}
+              features={plan.features}
+              isFeatured={plan.featured}
+              color={plan.color}
+            />
+
           ))}
+
         </div>
+
       </div>
+
     </section>
   );
 };

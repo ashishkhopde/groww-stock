@@ -24,6 +24,8 @@ import AdminLogin from "./pages/admin/Adminlogin";
 import AddMoney from "./pages/AddMoney";
 import PaymentPage from "./pages/PaymentPage";
 import AdminPaymentSettings from "./pages/admin/AdminPaymentSettings";
+import FooterSettings from "./pages/admin/FooterSettings";
+import AdminPlans from "./pages/admin/AdminPlans";
 
 // Layouts
 import AdminLayout from "./layouts/AdminLayout";
@@ -80,6 +82,8 @@ export default function App() {
           <Route path="wallet" element={<AdminWallet />} />
           <Route path="payment-settings" element={<AdminPaymentSettings />} />
           <Route path="withdrawal" element={<AdminWithdrawalRequests />} />
+          <Route path="footer-settings" element={<FooterSettings />} />
+          <Route path="/admin/plans" element={<AdminPlans />} />
         </Route>
       </Routes>
     </BrowserRouter>
