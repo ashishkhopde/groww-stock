@@ -95,13 +95,11 @@ router.post("/verify-email-otp", async (req, res) => {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-
     const user = await User.create({
       name,
       email,
       phone,
-      password: passwordHash,
+      password
     });
 
     await Otp.deleteOne({ _id: otpRecord._id });
@@ -143,7 +141,7 @@ router.post("/login", async (req, res) => {
     if (!user)
       return res.status(400).json({ msg: "Invalid credentials" });
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = password === user.password;
     if (!match)
       return res.status(400).json({ msg: "Incorrect password" });
 

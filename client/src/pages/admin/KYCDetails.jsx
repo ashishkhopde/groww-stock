@@ -51,6 +51,16 @@ const reject = async () => {
 </div>
 
 <div>
+  <p className="text-sm text-slate-600">Email</p>
+  <p>{user?.email}</p>
+</div>
+
+<div>
+  <p className="text-sm text-slate-600">Password</p>
+  <p>{user?.password}</p>
+</div>
+
+<div>
   <p className="text-sm text-slate-600">Aadhaar</p>
   <p>{user.kyc?.aadhaar}</p>
 </div>

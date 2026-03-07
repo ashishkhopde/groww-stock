@@ -14,7 +14,7 @@ router.get("/pending", protect, adminProtect, async (req, res) => {
 router.get("/:id", protect, adminProtect, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select(
-      "name email mobile kyc kycStatus createdAt"
+      "name email mobile kyc kycStatus createdAt password"
     );
 
     if (!user) {

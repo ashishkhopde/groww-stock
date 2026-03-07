@@ -31,6 +31,7 @@ import AdminLayout from "./layouts/AdminLayout";
 // Middleware
 import AdminRoute from "./middleware/AdminRoute";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import WithdrawalRequest from "./pages/WithdrawalRequest";
 import AdminWithdrawalRequests from "./pages/admin/AdminWithdrawalRequests";
 
@@ -65,9 +66,9 @@ export default function App() {
         <Route
           path="/admin"
           element={
-            <AdminRoute>
+            <AdminPrivateRoute>
               <AdminLayout />
-            </AdminRoute>
+            </AdminPrivateRoute>
           }
         >
           <Route index element={<AdminDashboard />} />

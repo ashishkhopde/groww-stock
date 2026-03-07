@@ -58,6 +58,22 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// ----------------------
+// ADMIN PROFILE
+// ----------------------
+router.get("/profile", protect, adminProtect, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.user.id).select("-password");
+    if (!admin) {
+      return res.status(404).json({ msg: "Admin not found" });
+    }
+    res.json(admin);
+  } catch (error) {
+    console.error("Error fetching admin profile:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 
 // ----------------------
 // GET ALL USERS (Protected)

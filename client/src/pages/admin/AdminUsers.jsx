@@ -38,7 +38,7 @@ export default function ManageUsers() {
         alert("Failed to load users");
       })
       .finally(() => setLoading(false));
-  }, [users]);
+  }, []);
 
   // Block / Unblock User
   const toggleBlock = async (id) => {
