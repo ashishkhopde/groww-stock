@@ -124,7 +124,7 @@ export default function Portfolio() {
                         {stock.qty} Qty | Buy {stock.buy}
                       </span>
                       <span>
-                        LTP 3.24 % |  Sell {stock.buy + 20 + stock.sale} 
+                        LTP 3.24 % |  Sell {stock.sale} 
                       </span>
                     </div>
 

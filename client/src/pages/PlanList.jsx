@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CreditCard,
   CheckCircle,
@@ -11,6 +12,8 @@ import TickerStrip from "../components/TickerStrip.jsx";
 import API from "../api/axios";
 
 export default function PlanList() {
+
+   const navigate = useNavigate();
 
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -181,6 +184,7 @@ export default function PlanList() {
 
                   {/* BUTTON */}
                   <button
+                    onClick={() => navigate("/add-money")}
                     className={`w-full py-3 rounded-xl text-lg font-semibold transition ${
                       plan.featured
                         ? "bg-white text-blue-700 hover:bg-slate-100"

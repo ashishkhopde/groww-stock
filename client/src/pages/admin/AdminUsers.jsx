@@ -3,18 +3,20 @@ import API from "../../api/axios";
 import {
   Users,
   CheckCircle,
-  Shield,
   Ban,
   Unlock,
   UserCog,
   XCircle,
   Clock,
   FileWarning,
+  Search,
+  X
 } from "lucide-react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -50,14 +52,14 @@ export default function ManageUsers() {
 
     setUsers(
       users.map((u) =>
-        u._id === id ? { ...u, isBlocked: !u.blocked } : u
+        u._id === id ? { ...u, isBlocked: !u.isBlocked } : u
       )
     );
   };
 
   const handleUser = (id) => {
     navigate(`/admin/kyc/${id}`);
-  }
+  };
 
   // Render KYC status badge
   const renderKYCStatus = (status) => {
@@ -92,21 +94,61 @@ export default function ManageUsers() {
 
   if (loading) return <div className="p-10">Loading users...</div>;
 
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
-          <Users size={28} className="text-emerald-600" />
-          Manage Users
-        </h1>
-        <p className="text-slate-500">
-          View, approve, block or manage all registered users.
-        </p>
+
+      {/* HEADER + SEARCH */}
+      <div className="flex items-center justify-between mb-8">
+
+        <div>
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
+            <Users size={28} className="text-emerald-600" />
+            Manage Users
+          </h1>
+          <p className="text-slate-500">
+            View, approve, block or manage all registered users.
+          </p>
+        </div>
+
+        {/* UPDATED SEARCH BAR */}
+        <div className="relative w-80">
+
+          <Search
+            size={18}
+            className="absolute text-slate-400 left-3 top-1/2 -translate-y-1/2"
+          />
+
+          <input
+            type="text"
+            placeholder="Search user by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+          />
+
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={16} />
+            </button>
+          )}
+
+        </div>
+
       </div>
 
+      {/* USER TABLE */}
       <div className="overflow-hidden bg-white border shadow-lg border-slate-200 rounded-2xl">
         <table className="w-full text-sm">
+
           <thead className="text-xs uppercase bg-slate-100 text-slate-600">
             <tr>
               <th className="p-4 text-left">User</th>
@@ -118,12 +160,11 @@ export default function ManageUsers() {
           </thead>
 
           <tbody>
-            {users.map((u) => (
+            {filteredUsers.map((u) => (
               <tr
                 key={u._id}
                 className="transition border-t border-slate-200 hover:bg-slate-50"
               >
-                {/* User */}
                 <td className="p-4 font-medium text-slate-800">
                   <div className="flex items-center gap-3">
                     <img
@@ -134,13 +175,10 @@ export default function ManageUsers() {
                   </div>
                 </td>
 
-                {/* Email */}
                 <td className="p-4">{u.email}</td>
 
-                {/* KYC Status */}
                 <td className="p-4">{renderKYCStatus(u.kycStatus)}</td>
 
-                {/* Blocked Status */}
                 <td className="p-4">
                   {u.isBlocked ? (
                     <span className="flex items-center gap-1 font-semibold text-rose-600">
@@ -153,9 +191,8 @@ export default function ManageUsers() {
                   )}
                 </td>
 
-                {/* Actions */}
                 <td className="p-4 space-x-2 text-right">
-                  {/* KYC Actions */}
+
                   {u.kycStatus === "pending" && (
                     <>
                       <button
@@ -182,24 +219,30 @@ export default function ManageUsers() {
                     </button>
                   )}
 
-                  {/* Block/Unblock */}
                   <button
-                    onClick={() => {toggleBlock(u._id)}}
-                    className={`px-3 py-1 text-xs rounded-lg ${u.isBlocked ? "bg-emerald-600" : "bg-rose-600"
-                      } text-white`}
+                    onClick={() => toggleBlock(u._id)}
+                    className={`px-3 py-1 text-xs rounded-lg ${
+                      u.isBlocked ? "bg-emerald-600" : "bg-rose-600"
+                    } text-white`}
                   >
                     {u.isBlocked ? "Unblock" : "Block"}
                   </button>
 
-                    <button className="px-3 py-1 text-xs text-white bg-indigo-600 rounded-lg" onClick={()=>handleUser(u._id)}>
-                      <UserCog size={14} />
-                    </button>
+                  <button
+                    className="px-3 py-1 text-xs text-white bg-indigo-600 rounded-lg"
+                    onClick={() => handleUser(u._id)}
+                  >
+                    <UserCog size={14} />
+                  </button>
+
                 </td>
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
+
     </div>
   );
 }

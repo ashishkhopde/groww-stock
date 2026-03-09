@@ -54,7 +54,7 @@ router.put("/:id", protect, adminProtect, async (req, res) => {
 
     // ✅ IMPORTANT: Increment Sale Points
     if (sale !== undefined) {
-      stock.sale = stock.sale + Number(sale);
+      stock.sale = Number(sale);
     }
 
     const updated = await stock.save();

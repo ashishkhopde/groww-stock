@@ -414,7 +414,7 @@ export default function StockManagement() {
               <th className="p-4 text-left">Stock</th>
               <th className="p-4 text-left">Qty</th>
               <th className="p-4 text-left">Buy</th>
-              <th className="p-4 text-left">Increase Sell Points</th>
+              <th className="p-4 text-left">Increase Sell Price</th>
               <th className="p-4 text-left">Profit</th>
               <th className="p-4 text-left">Loss</th>
               <th className="p-4 text-right">Actions</th>
@@ -443,7 +443,7 @@ export default function StockManagement() {
                         },
                       })
                     }
-                    placeholder="+ Points"
+                    placeholder="Sell Price"
                     className="w-24 p-2 text-purple-600 border rounded-lg bg-purple-50"
                   />
                 </td>
