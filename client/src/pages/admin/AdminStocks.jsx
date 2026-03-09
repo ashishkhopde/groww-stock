@@ -229,13 +229,12 @@ export default function StockManagement() {
       const temp = {};
       stocksRes.data.forEach((s) => {
         temp[s._id] = {
-          profit: s.profit,
-          loss: s.loss,
-
-          // ✅ Input me value बनी रहेगी
-          saleIncrement: editValues[s._id]?.saleIncrement || "",
+          profit: s.profit || "",
+          loss: s.loss || "",
+          saleIncrement: s.sale || "",   // ✅ backend sale value
         };
       });
+
 
       setEditValues(temp);
     } catch (error) {
@@ -311,7 +310,7 @@ export default function StockManagement() {
           loss: editValues[id]?.loss,
 
           // ✅ Only Increment Points
-          sale: Number(editValues[id]?.saleIncrement || 0),
+        sale: Number(editValues[id]?.saleIncrement || 0),   
         },
         {
           headers: {
