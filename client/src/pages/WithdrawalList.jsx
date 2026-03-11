@@ -18,13 +18,14 @@ export default function WithdrawalList() {
         });
 
         const data = res.data
-          .filter((t) => t.type === "debit")
+          .filter((t) => t.type === "debit" && t.note === "Withdrawal")
           .map((t) => ({
             amount: `-₹ ${t.amount}`,
             status: t.status || "Pending",
             method: t.note || "Bank Transfer",
             date: new Date(t.createdAt).toLocaleDateString("en-IN"),
           }));
+
 
         setWithdrawals(data);
       } catch (err) {

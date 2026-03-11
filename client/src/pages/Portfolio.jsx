@@ -45,9 +45,10 @@ export default function Portfolio() {
 
         const currentAmt = investedAmt + profitAmt - lossAmt;
 
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const tenHoursAgo = new Date(Date.now() - 10 * 60 * 60 * 1000);
+
         const recentStocks = mapped.filter(
-          (s) => s.createdAt && new Date(s.createdAt) >= twentyFourHoursAgo
+          (s) => s.createdAt && new Date(s.createdAt) >= tenHoursAgo
         );
 
         setHoldings(recentStocks);

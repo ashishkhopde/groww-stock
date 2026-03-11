@@ -1,5 +1,7 @@
 import express from "express";
 import Stock from "../../models/stock.js";
+import User from "../../models/User.js";
+import WalletTransaction from "../../models/WalletTransaction.js";
 import { protect, adminProtect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -14,7 +16,7 @@ router.post("/add", protect, adminProtect, async (req, res) => {
       quantity,
       profit = 0,
       loss = 0,
-      sale = 0, // ✅ sale points default
+      sale = 0,
     } = req.body;
 
     if (!userId || !stockName || !price || !quantity)
@@ -27,7 +29,7 @@ router.post("/add", protect, adminProtect, async (req, res) => {
       quantity,
       profit,
       loss,
-      sale, // ✅ store sale points
+      sale,
     });
 
     res.json({ msg: "Stock added successfully", stock });
@@ -45,14 +47,57 @@ router.put("/:id", protect, adminProtect, async (req, res) => {
     const stock = await Stock.findById(req.params.id);
     if (!stock) return res.status(404).json({ msg: "Stock not found" });
 
-    // Normal updates
+    const user = await User.findById(stock.user);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    /* ---------- NORMAL FIELD UPDATE ---------- */
     stock.stockName = stockName || stock.stockName;
     stock.price = price !== undefined ? Number(price) : stock.price;
     stock.quantity = quantity !== undefined ? Number(quantity) : stock.quantity;
-    stock.profit = profit !== undefined ? Number(profit) : stock.profit;
-    stock.loss = loss !== undefined ? Number(loss) : stock.loss;
 
-    // ✅ IMPORTANT: Increment Sale Points
+    /* ================= PROFIT UPDATE ================= */
+    if (profit !== undefined) {
+      const newProfit = Number(profit);
+      const diff = newProfit - stock.profit;
+
+      if (diff !== 0) {
+        user.wallet += diff;
+        await user.save();
+
+        await WalletTransaction.create({
+          userId: user._id,
+          type: diff > 0 ? "credit" : "debit",
+          amount: Math.abs(diff),
+          note: "Stock Profit Update",
+          status: "Success",
+        });
+      }
+
+      stock.profit = newProfit;
+    }
+
+    /* ================= LOSS UPDATE ================= */
+    if (loss !== undefined) {
+      const newLoss = Number(loss);
+      const diff = newLoss - stock.loss;
+
+      if (diff !== 0) {
+        user.wallet -= diff;
+        await user.save();
+
+        await WalletTransaction.create({
+          userId: user._id,
+          type: "debit",
+          amount: Math.abs(diff),
+          note: "Stock Loss Update",
+          status: "Success",
+        });
+      }
+
+      stock.loss = newLoss;
+    }
+
+    /* ================= SALE UPDATE ================= */
     if (sale !== undefined) {
       stock.sale = Number(sale);
     }
@@ -70,15 +115,40 @@ router.put("/:id", protect, adminProtect, async (req, res) => {
 });
 
 /* ===================== DELETE STOCK ===================== */
-router.delete("/:id", protect, adminProtect, async (req, res) => {
-  try {
-    await Stock.findByIdAndDelete(req.params.id);
-    res.json({ msg: "Stock deleted successfully" });
-  } catch (error) {
-    console.error("DELETE STOCK ERROR:", error);
-    res.status(500).json({ msg: "Server error while deleting stock" });
-  }
-});
+  router.delete("/:id", protect, adminProtect, async (req, res) => {
+    try {
+      const stock = await Stock.findById(req.params.id);
+
+      if (!stock) return res.status(404).json({ msg: "Stock not found" });
+
+      const user = await User.findById(stock.user);
+
+      if (!user) return res.status(404).json({ msg: "User not found" });
+
+      const net = stock.profit - stock.loss;
+
+      // reset wallet effect
+      user.wallet -= net;
+      await user.save();
+
+      await WalletTransaction.create({
+        userId: user._id,
+        type: net > 0 ? "debit" : "credit",
+        amount: Math.abs(net),
+        note: "Stock Reset",
+        status: "Success",
+      });
+
+      await stock.deleteOne();
+
+      res.json({ msg: "Stock deleted and wallet adjusted" });
+
+    } catch (error) {
+      console.error("DELETE STOCK ERROR:", error);
+      res.status(500).json({ msg: "Server error while deleting stock" });
+    }
+  });
+
 
 /* ===================== GET ALL STOCKS ===================== */
 router.get("/", protect, adminProtect, async (req, res) => {

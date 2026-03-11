@@ -1,34 +1,31 @@
 import React, { useEffect, useState } from "react";
 import API from "../api/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
-import {
-  Wallet,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Users,
-} from "lucide-react";
-
-/* ✅ COMPONENTS */
-// import DashboardNavbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import TickerStrip from "../components/TickerStrip.jsx";
 
 export default function ModernDashboard() {
+
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [totalProfit, setTotalProfit] = useState(0);
+  const [totalLoss, setTotalLoss] = useState(0);
 
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
+
     async function loadData() {
       try {
+
         const profileRes = await API.get("/auth/profile", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
         setUser(profileRes.data);
 
         const historyRes = await API.get(`/admin/wallet/history/${userId}`, {
@@ -36,7 +33,9 @@ export default function ModernDashboard() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
         setTransactions(historyRes.data || []);
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -44,79 +43,66 @@ export default function ModernDashboard() {
       }
     }
 
-    const load = async () => {
+    const loadStocks = async () => {
       try {
+
         const token = localStorage.getItem("token");
-        if (!token) {
-          window.location.href = "/login";
-          return;
-        }
 
         const res = await API.get("/stocks/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const stocks = res.data.stocks || [];
-        // console.log(stocks);
-        const mapped = stocks.map((s) => ({
-          id: s._id,
-          symbol: s.stockName?.toUpperCase(),
-          qty: s.quantity,
-          buy: Number(s.price),
-          profit: Number(s.profit) || 0,
-          loss: Number(s.loss) || 0,
-          createdAt : s.createdAt
-        }));
 
-        // const investedAmt = mapped.reduce((sum, s) => sum + s.buy * s.qty, 0);
-        const profitAmt = mapped.reduce((sum, s) => sum + s.profit, 0);
-        // const lossAmt = mapped.reduce((sum, s) => sum + s.loss, 0);
+        const profit = stocks.reduce((sum, s) => sum + (Number(s.profit) || 0), 0);
+        const loss = stocks.reduce((sum, s) => sum + (Number(s.loss) || 0), 0);
 
-        // const currentAmt = investedAmt + profitAmt - lossAmt;
+        setTotalProfit(profit - loss);
+        setTotalLoss(loss);
 
-        // const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        // const recentStocks = mapped.filter(
-        //   (s) => s.createdAt && new Date(s.createdAt) >= twentyFourHoursAgo
-        // );
-
-        setTotalProfit(profitAmt);
       } catch (error) {
-        console.error("Error loading portfolio:", error);
+        console.error(error);
       }
     };
 
-    load();
-
+    loadStocks();
     loadData();
+
   }, [userId]);
+
 
   if (loading) return <div className="p-6">Loading...</div>;
 
-  const totalBalance = user?.wallet || 0;
+
+
+  /* ================= CALCULATIONS ================= */
+
   const totalDeposit = transactions
-    .filter((t) => t.type === "credit")
+    .filter(
+      (t) =>
+        t.type === "credit" &&
+        t.note !== "Stock Profit Update"
+    )
     .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const depositAfterLoss = totalDeposit - totalLoss;
 
   const totalWithdraw = transactions
-    .filter((t) => t.type === "debit")
+    .filter((t) => t.note === "Withdrawal")
     .reduce((sum, tx) => sum + tx.amount, 0);
 
-  const recent = transactions.slice(0, 5);
+  const totalBalance = user?.wallet || 0;
+
+
 
   return (
     <DashboardLayout>
       <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
 
-        {/* HEADER */}
-        {/* <DashboardNavbar /> */}
-
-        {/* TICKER */}
         <TickerStrip />
 
-        {/* CONTENT */}
         <div className="flex-grow w-full px-4 py-3 mx-auto sm:px-6 lg:px-8 max-w-5xl">
 
-          {/* TITLE */}
           <div className="mb-6">
             <h1 className="text-xl font-bold sm:text-2xl text-slate-900">
               Dashboard Overview
@@ -126,8 +112,11 @@ export default function ModernDashboard() {
             </p>
           </div>
 
-          {/* STATS CARDS */}
-         <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
+
+          {/* ================= STATS ================= */}
+
+          <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
+
             <StatCard
               title="Total Balance"
               value={`₹ ${totalBalance.toLocaleString("en-IN")}`}
@@ -137,7 +126,7 @@ export default function ModernDashboard() {
 
             <StatCard
               title="Total Deposit"
-              value={`₹ ${totalDeposit.toLocaleString("en-IN")}`}
+              value={`₹ ${depositAfterLoss.toLocaleString("en-IN")}`}
               icon="⬇️"
               color="navy"
             />
@@ -151,106 +140,63 @@ export default function ModernDashboard() {
 
             <StatCard
               title="Total Profit"
-              value={totalProfit}
+              value={`₹ ${totalProfit.toLocaleString("en-IN")}`}
               icon="📊"
               color="navy"
             />
 
             <StatCard
               title="Referral Bonus"
-              value={user.referralBonus}
+              value={`₹ ${user.referralBonus}`}
               icon="🎉"
               color="navy"
             />
 
             <StatCard
               title="Bonus"
-              value={user.bonus}
+              value={`₹ ${user.bonus}`}
               icon="🎁"
               color="navy"
             />
+
           </div>
 
 
-          {/* ADD BALANCE */}
+          {/* ================= BUTTONS ================= */}
+
           <div className="flex gap-4 mb-6">
+
             <button
               onClick={() => (window.location.href = "/add-money")}
               className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
             >
               Add Balance
             </button>
+
             <button
               onClick={() => (window.location.href = "/withdrawal-request")}
               className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
             >
-             Withdrawal Requests
+              Withdrawal Requests
             </button>
+
           </div>
-
-          {/* RECENT TRANSACTIONS */}
-          {/* <div className="overflow-hidden bg-white border shadow-sm rounded-2xl border-slate-100">
-            <div className="p-4 border-b sm:p-6 border-slate-100">
-              <h2 className="text-base font-bold sm:text-lg text-slate-800">
-                Recent Transactions
-              </h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-[600px] w-full text-sm">
-                <thead className="text-xs font-semibold uppercase bg-slate-50 text-slate-500">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Type</th>
-                    <th className="px-4 py-3 text-left">Date</th>
-                    <th className="px-4 py-3 text-left">Note</th>
-                    <th className="px-4 py-3 text-right">Amount</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {recent.map((tx) => (
-                    <tr key={tx._id} className="hover:bg-slate-50">
-                      <td className="flex items-center gap-2 px-4 py-3 font-semibold">
-                        {tx.type === "credit" ? (
-                          <ArrowDownLeft size={16} className="text-emerald-600" />
-                        ) : (
-                          <ArrowUpRight size={16} className="text-rose-600" />
-                        )}
-                        {tx.type.toUpperCase()}
-                      </td>
-                      <td className="px-4 py-3 text-slate-500">
-                        {new Date(tx.createdAt).toLocaleDateString("en-IN")}
-                      </td>
-                      <td className="px-4 py-3 text-slate-500">
-                        {tx.note || "—"}
-                      </td>
-                      <td
-                        className={`px-4 py-3 text-right font-bold ${
-                          tx.type === "credit"
-                            ? "text-emerald-600"
-                            : "text-rose-600"
-                        }`}
-                      >
-                        {tx.type === "credit" ? "+₹" : "-₹"}{" "}
-                        {tx.amount.toLocaleString("en-IN")}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div> */}
 
         </div>
 
-        {/* FOOTER */}
         <Footer />
+
       </div>
     </DashboardLayout>
   );
 }
 
-/* ================= STAT CARD COMPONENT ================= */
+
+
+/* ================= STAT CARD ================= */
+
 function StatCard({ title, value, icon, color }) {
+
   const iconBgMap = {
     navy: "bg-gradient-to-br from-[#0F172A] to-[#1E293B]",
     emerald: "bg-gradient-to-br from-emerald-500 to-emerald-600",
@@ -260,29 +206,27 @@ function StatCard({ title, value, icon, color }) {
 
   return (
     <div className="p-5 bg-white border shadow-sm sm:p-6 rounded-2xl border-slate-100">
+
       <div className="flex items-center justify-between">
-        
-        {/* LEFT CONTENT */}
+
         <div>
           <p className="mb-1 text-xs font-medium text-slate-500">
             {title}
           </p>
+
           <h3 className="text-xl font-bold text-slate-800">
             {value}
           </h3>
         </div>
 
-        {/* ICON */}
         <div
-          className={`w-11 h-11 rounded-full flex items-center justify-center text-white shadow-md ${
-            iconBgMap[color]
-          }`}
+          className={`w-11 h-11 rounded-full flex items-center justify-center text-white shadow-md ${iconBgMap[color]}`}
         >
           <span className="text-lg">{icon}</span>
         </div>
 
       </div>
+
     </div>
   );
 }
-
